@@ -1,5 +1,8 @@
 const db = require('db');
+const log = require('logger')(module);
 const User = require('./user');
+
+db.connect();
 
 function run () {
     const vasya = new User("Vasya");
@@ -7,7 +10,7 @@ function run () {
 
     vasya.hello(petya);
 
-    console.log(db.getPhrase('runSuccessful'));
+    log(db.getPhrase('runSuccessful'));
 }
 
 if(module.parent) {

@@ -1,4 +1,4 @@
-var phrases;
+let phrases;
 
 module.exports.connect = function() {
     phrases = require('./ru');
