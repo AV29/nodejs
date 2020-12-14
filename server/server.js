@@ -1,18 +1,18 @@
 let http = require('http');
+let url = require('url');
 
-let server = new http.Server();
-// http.Serve -> net.Server -> EventEmitter
-server.listen(1337, '127.0.0.1');
+let server = new http.Server((req, res) => {
+    console.log(req.headers);
 
-var counter = 0;
+    let parsedURL = url.parse(req.url, true);
 
-var emit = server.emit;
+    if(parsedURL.pathname === '/echo' && parsedURL.query.message) {
+        res.statusCode = 200;
+        res.setHeader('Cache-control', 'no-cache');
+        res.end(parsedURL.query.message);
+    } else {
+        res.statusCode = 404;
+        res.end('Page not found!');
+    }
 
-server.emit = function(event) {
-    console.log(event);
-    emit.apply(server, arguments);
-};
-
-server.on('request', function(req, res) {
-    res.end(`Hello world! ${++counter}`);
-});
+}).listen(1337, '127.0.0.1');
