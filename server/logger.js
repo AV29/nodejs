@@ -11,7 +11,10 @@ function makeLogger(path) {
         const transports = [
             new winston.transports.Console({
                 timestamp: true,
-                colorize: true,
+                format: winston.format.combine(
+                    winston.format.colorize(),
+                    winston.format.simple()
+                ),
                 level: 'info'
             }),
 
