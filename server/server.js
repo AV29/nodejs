@@ -1,3 +1,4 @@
 let http = require('http');
-let requestHandler = require('./request');
-let server = new http.Server(requestHandler).listen(1337, '127.0.0.1');
+// let requestHandler = require('./request');
+let streamRequestHandler = require('./streamRequest');
+let server = new http.Server(streamRequestHandler).listen(1337, '127.0.0.1');
