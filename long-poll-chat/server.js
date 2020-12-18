@@ -2,6 +2,9 @@ const http = require('http');
 const fs = require('fs');
 const chat = require('./chat');
 
+
+const port  = !isNaN(Number(process.argv[2])) ? process.argv[2] : 3000;
+
 http.createServer(function(req, res) {
 
     switch(req.url) {
@@ -46,8 +49,13 @@ http.createServer(function(req, res) {
             res.end('Not found');
 
     }
-}).listen(3000);
-
+}).listen(port, err => {
+    if(err) {
+        console.error(err);
+    } else {
+        console.log(`Listening on ${port}`);
+    }
+});
 
 function sendFile(fileName, res) {
     const fileStream = fs.createReadStream(fileName);
