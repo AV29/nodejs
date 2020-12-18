@@ -56,5 +56,8 @@ function sendFile(fileName, res) {
             res.statusCode = 500;
             res.end("Server error");
         })
-        .pipe(res);
+        .pipe(res)
+        .on('close', function() {
+            fileStream.destroy();
+        });
 }
