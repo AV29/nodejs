@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+    <body class="container">
+        <p class="lead">Welcome to chat!</p>
+
+        <form id="publish" class="form-inline">
+            <input type="text" name="message">
+            <input type="submit" value="Send">
+        </form>
+
+        <ul id="messages"></ul>
+
+        <script>
+            publish.onsubmit = function () {
+                const xhr = new XMLHttpRequest();
+
+                xhr.open("POST", "/publish", true);
+
+                xhr.send(JSON.stringify({ message: this.elements.message.value }));
+
+                this.elements.message.value = '';
+
+                return false;
+            };
+
+            subscribe();
+
+            function subscribe() {
+                const xhr = new XMLHttpRequest();
+
+                xhr.open("GET", "/subscribe", true);
+
+                xhr.onload = function() {
+                    const li = document.createElement('li');
+                    li.textContent = this.responseText;
+                    messages.appendChild(li);
+
+                    subscribe();
+                };
+
+                xhr.onerror = xhr.onabort = function(err) {
+                    console.error(err);
+                    setTimeout(subscribe, 500);
+                };
+
+                xhr.send('');
+            }
+        </script>
+    </body>
+</html>
