@@ -2,7 +2,7 @@ const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const debug = require('debug')('chat:server');
 const http = require('http');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const path = require('path');
 const logger = require('morgan');
 const log = require('./tools/log')(module);
@@ -10,6 +10,7 @@ const express = require('express');
 const config = require('config');
 
 const app = express();
+app.engine('ejs', require('ejs-locals'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(logger('dev'));
@@ -59,9 +60,9 @@ function onError(error) {
         throw error;
     }
 
-    const bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
+    const bind = typeof config.get('port') === 'string'
+        ? 'Pipe ' + config.get('port')
+        : 'Port ' + config.get('port');
 
     // handle specific listen errors with friendly messages
     switch (error.code) {

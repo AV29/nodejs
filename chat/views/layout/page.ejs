@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%=blocks.title%></title>
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+        <script
+                src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+                integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body>
+        <header><%-blocks.header%></header>
+        <section class="container">
+            <%-partial('../partials/topNavigation');%>
+            <h1><%=blocks.title%></h1>
+
+            <%-body -%>
+        </section>
+        <footer>
+            <%-blocks.footer%>
+        </footer>
+    </body>
+</html>
