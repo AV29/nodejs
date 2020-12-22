@@ -7,30 +7,21 @@ const url = 'mongodb://localhost:27017/chat';
 // Database Name
 const dbName = 'chat';
 
-const insertAndCount = function(db) {
+const insertRecord = function(db, record) {
     return new Promise((resolve, reject) => {
         const collection = db.collection(dbName);
-        collection.insertOne({ anton: 29 }).then(docs => {
-            collection.countDocuments().then((err, count) => {
-                console.log(format("count = %s", count));
-            });
-
-            collection.find().toArray(function(err, results) {
-                console.dir(results);
-            });
-
-            resolve(docs);
-        });
+        collection.insertOne(record).then(resolve);
     });
-
 };
 
 // Use connect method to connect to the server
-MongoClient.connect(url, function(err, client) {
-    if(err) throw err;
-    console.log("Connected successfully to server");
-    const db = client.db(dbName);
-    insertAndCount(db).then(() => {
-        client.close();
-    });
-});
+MongoClient.connect(url)
+    .then((client) => {
+        console.log("Connected successfully to server");
+        const db = client.db(dbName);
+        const record = { anton: new Date() };
+        insertRecord(db, record).then(() => {
+            client.close();
+        });
+    })
+    .catch(err => console.error(err));
