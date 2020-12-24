@@ -1,13 +1,12 @@
+const User = require('./models/user').User;
 
-const schema = mongoose.Schema({
-    name: String
+const user = new User({
+    username: 'Anton',
+    password: '123456'
 });
 
-schema.methods.meow = function() {
-    console.log(this.get('name'));
-};
-
-const Cat = mongoose.model('Cat', schema);
-
-const kitty = new Cat({ name: 'Zildjian' });
-kitty.save().then(record =>{ console.log(record.meow()); });
+user.save().then(user => {
+    console.log(user);
+}).catch(err => {
+    console.error(err);
+});

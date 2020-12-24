@@ -4,12 +4,7 @@
     "uri": "mongodb://localhost:27017/chat",
     "options": {
       "useNewUrlParser": true,
-      "useUnifiedTopology": true,
-      "server": {
-        "socketOptions": {
-          "keepAlive": 1
-        }
-      }
+      "useUnifiedTopology": true
     }
   }
 }
