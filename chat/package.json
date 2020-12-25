@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "NODE_PATH=. NODE_ENV=development node ./app.js",
-    "start:db": "NODE_PATH=. node ./createDb.js"
+    "start:db": "NODE_PATH=. NODE_ENV=development node ./createDb.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
