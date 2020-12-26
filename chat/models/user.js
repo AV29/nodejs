@@ -8,6 +8,9 @@ const schema = new Schema({
         unique: true,
         required: true
     },
+    lastname: {
+      type: String
+    },
     hashedPassword: {
         type: String,
         required: true
