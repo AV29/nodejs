@@ -11,6 +11,8 @@
   "session": {
     "secret": "qwerty",
     "key": "sid",
+    "resave": false,
+    "saveUninitialized": false,
     "cookie": {
       "path": "/",
       "httpOnly": true,
