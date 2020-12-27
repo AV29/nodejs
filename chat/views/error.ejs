@@ -1,3 +1,4 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<% layout('./layout/page'); -%>
+<% block('title', error.message); -%>
+<p>Sorry! An error occurred! </p>
+<p><%= error.message %></p>

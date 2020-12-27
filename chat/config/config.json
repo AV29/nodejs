@@ -7,5 +7,14 @@
       "useUnifiedTopology": true,
       "useCreateIndex": true
     }
+  },
+  "session": {
+    "secret": "qwerty",
+    "key": "sid",
+    "cookie": {
+      "path": "/",
+      "httpOnly": true,
+      "maxAge": null
+    }
   }
 }

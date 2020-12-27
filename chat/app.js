@@ -1,4 +1,3 @@
-const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const debug = require('debug')('chat:server');
 const http = require('http');
@@ -6,8 +5,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const logger = require('morgan');
 const log = require('./tools/log')(module);
+const mongoose = require('./tools/mongoose');
 const express = require('express');
 const config = require('config');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 const app = express();
 app.engine('ejs', require('ejs-locals'));
@@ -16,6 +18,20 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(session({
+    secret: config.get("session:secret"),
+    key: config.get("session:key"),
+    cookie: config.get("session:cookie"),
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection
+    })
+}));
+
+app.use(function(req, res, next) {
+    req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
+    res.send(`Visits: ${req.session.numberOfVisits}`);
+});
+app.use(require('./middeware/sendHttpError'));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -27,21 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
+app.use(require('./middeware/errorHandler'));
 
 const server = http.createServer(app).listen(config.get('port'), function(err) {
     if(err) {
@@ -53,7 +55,6 @@ const server = http.createServer(app).listen(config.get('port'), function(err) {
 
 server.on('error', onError);
 server.on('listening', onListening);
-
 
 function onError(error) {
     if (error.syscall !== 'listen') {
