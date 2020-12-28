@@ -1,0 +1,50 @@
+<% layout('./layout/page'); -%>
+<% block('title', 'Login'); -%>
+<h1 class="lead">Registration and sign in!</h1>
+
+<form name="login-form">
+    <div>
+        <label for="input-username">Name</label>
+        <div>
+            <input type="text" name="username" value="name" id="input-username" placeholder="name">
+        </div>
+    </div>
+    <div>
+        <label for="input-password">Password</label>
+
+        <div class="col-lg-10">
+            <input name="password" value="pass" type="password" class="form-control" id="input-password" placeholder="Пароль">
+        </div>
+    </div>
+    <div>
+        <button type="submit" data-loading-text="Sending...">Enter</button>
+        <span class="help-block error"></span>
+    </div>
+</form>
+
+<script>
+    $(document.forms['login-form']).on('submit', function() {
+        const form = $(this);
+        $('.error', form).html('');
+        $(":submit", form).button("loading");
+        $.ajax({
+            url: "/login",
+            method: "POST",
+            data: form.serialize(),
+            complete: function() {
+                $(":submit", form).button("reset");
+            },
+            statusCode: {
+                200: function() {
+                    form.html("Вы вошли в сайт").addClass('alert-success');
+                    window.location.href = "/chat";
+                },
+                403: function(jqXHR) {
+                    const error = JSON.parse(jqXHR.responseText);
+                    $('.error', form).html(error.message);
+                }
+            }
+        });
+        return false;
+    });
+</script>
