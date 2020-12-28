@@ -31,7 +31,7 @@ app.use(session({
 
 app.use(function(req, res, next) {
     req.session.numberOfVisits = req.session.numberOfVisits + 1 || 1;
-    res.send(`Visits: ${req.session.numberOfVisits}`);
+    next();
 });
 app.use(require('./middeware/sendHttpError'));
 
@@ -44,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('*', (req, res, next) => next(404));
 app.use(require('./middeware/errorHandler'));
 
 const server = http.createServer(app).listen(config.get('port'), function(err) {

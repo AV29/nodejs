@@ -7,7 +7,7 @@ const router = express.Router();
 const User = require('../models/User').User;
 router.get('/', function(req, res, next) {
   User.find({})
-      .then(users => { res.json(users) })
+      .then(users => { res.render('users', { users: users }) })
       .catch(err => next(err));
 });
 
