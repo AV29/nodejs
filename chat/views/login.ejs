@@ -2,37 +2,42 @@
 <% block('title', 'Login'); -%>
 <h1 class="lead">Registration and sign in!</h1>
 
-<form name="login-form">
-    <div>
-        <label for="input-username">Name</label>
-        <div>
-            <input type="text" name="username" value="name" id="input-username" placeholder="name">
+<form class="form-horizontal login-form" name="login-form">
+    <div class="form-group">
+        <label for="input-username" class="col-lg-2 control-label">Имя</label>
+
+        <div class="col-lg-10">
+            <input name="username" value="name" type="text" class="form-control" id="input-username" placeholder="Имя">
         </div>
     </div>
-    <div>
-        <label for="input-password">Password</label>
+    <div class="form-group">
+        <label for="input-password" class="col-lg-2 control-label">Пароль</label>
 
         <div class="col-lg-10">
             <input name="password" value="pass" type="password" class="form-control" id="input-password" placeholder="Пароль">
         </div>
     </div>
-    <div>
-        <button type="submit" data-loading-text="Sending...">Enter</button>
-        <span class="help-block error"></span>
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <button type="submit" class="btn btn-primary" data-loading-text="Отправляю...">Войти</button>
+            <span class="help-block error"></span>
+        </div>
     </div>
 </form>
 
 <script>
-    $(document.forms['login-form']).on('submit', function() {
-        const form = $(this);
+    $(document.forms['login-form']).on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        console.log(form.serialize());
         $('.error', form).html('');
-        $(":submit", form).button("loading");
+        $("form button").html("loading");
         $.ajax({
             url: "/login",
             method: "POST",
             data: form.serialize(),
             complete: function() {
-                $(":submit", form).button("reset");
+                $("form button").html("Reset");
             },
             statusCode: {
                 200: function() {
@@ -40,7 +45,7 @@
                     window.location.href = "/chat";
                 },
                 403: function(jqXHR) {
-                    const error = JSON.parse(jqXHR.responseText);
+                    var error = JSON.parse(jqXHR.responseText);
                     $('.error', form).html(error.message);
                 }
             }

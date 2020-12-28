@@ -1,7 +1,7 @@
 const log = require('./log')(module);
 const debug = require('debug')('chat:server');
 const http = require('http');
-const config = require('config');
+const config = require('../config');
 
 module.exports = app => {
     const server = http.createServer(app).listen(config.get('port'), function(err) {

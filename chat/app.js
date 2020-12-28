@@ -6,7 +6,7 @@ const applyRoutes = require('./routes/routes');
 const startServer = require('./tools/startServer');
 const mongoose = require('./tools/mongoose');
 const express = require('express');
-const config = require('config');
+const config = require('./config');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
@@ -16,6 +16,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
     secret: config.get("session:secret"),
@@ -30,8 +31,6 @@ app.use(session({
 app.use(require('./middeware/numberOfVisits'));
 app.use(require('./middeware/sendHttpError'));
 applyRoutes(app);
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('./middeware/errorHandler'));
 
