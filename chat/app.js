@@ -15,6 +15,7 @@ app.engine('ejs', require('ejs-locals'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(logger('dev'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -28,10 +29,10 @@ app.use(session({
         mongooseConnection: mongoose.connection
     })
 }));
+app.use(require('./middeware/loadUser'));
 app.use(require('./middeware/numberOfVisits'));
 app.use(require('./middeware/sendHttpError'));
 applyRoutes(app);
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('./middeware/errorHandler'));
 
 startServer(app);

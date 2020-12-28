@@ -1,6 +1,5 @@
 const http = require('http');
 const util = require('util');
-const path = require('path');
 
 function HttpError(status, message) {
     Error.apply(this, arguments);
@@ -13,3 +12,14 @@ util.inherits(HttpError, Error);
 HttpError.prototype.name = 'HttpError';
 
 module.exports.HttpError = HttpError;
+
+function AuthError(message) {
+    Error.apply(this, arguments);
+    Error.captureStackTrace(this, AuthError);
+
+    this.message = message
+}
+util.inherits(AuthError, Error);
+AuthError.prototype.name = 'AuthError';
+
+module.exports.AuthError = AuthError;

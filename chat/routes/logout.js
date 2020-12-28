@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', function(req, res) {
-    res.render('index');
+router.post('/', function(req, res) {
+   req.session.destroy();
+   res.redirect('/');
 });
 
 module.exports = router;

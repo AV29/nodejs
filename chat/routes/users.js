@@ -3,8 +3,7 @@ const HttpError = require('../error').HttpError;
 const ObjectID = require('mongodb').ObjectID;
 const router = express.Router();
 
-/* GET users listing. */
-const User = require('../models/User').User;
+const User = require('../models/user').User;
 router.get('/', function(req, res, next) {
   User.find({})
       .then(users => { res.render('users', { users: users }) })

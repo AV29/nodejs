@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const AuthError = require('../error').AuthError;
 const mongoose = require('../tools/mongoose');
 const Schema = mongoose.Schema;
 
@@ -9,7 +10,7 @@ const schema = new Schema({
         required: true
     },
     lastname: {
-      type: String
+        type: String
     },
     hashedPassword: {
         type: String,
@@ -41,7 +42,29 @@ schema.virtual('password')
     .get(function() { return this._plainPassword; });
 
 schema.methods.checkPassword = function(password) {
-  return this.encryptPassword(password) === this.hashedPassword;
+    return this.encryptPassword(password) === this.hashedPassword;
+};
+
+schema.statics.authorize = function(username, password) {
+    const User = this;
+    return new Promise((resolve, reject) => {
+        User.findOne({ username: username })
+            .then(user => {
+                if(user) {
+                    if(user.checkPassword(password)) {
+                        resolve(user);
+                    } else {
+                        reject(new AuthError("Wrong password"))
+                    }
+                } else {
+                    const user = new User({ username: username, password: password });
+                    user.save()
+                        .then(user => resolve(user))
+                        .catch(err => reject(err))
+                }
+            })
+            .catch(err => reject(err))
+    });
 };
 
 module.exports.User = mongoose.model('User', schema);

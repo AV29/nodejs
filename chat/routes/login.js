@@ -1,40 +1,26 @@
-const User = require('../models/User').User;
-const log = require('../tools/log')(module);
+const User = require('../models/user').User;
+const AuthError = require('../error').AuthError;
 const HttpError = require('../error').HttpError;
 const express = require('express');
 const router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     res.render('login', { title: 'Login' });
 });
 
 router.post('/', function(req, res, next) {
-    const username = req.body.username;
-    const password = req.body.password;
-
-    const registerUser = user => {
-       req.session.user = user._id;
-       res.send({ });
-    };
-
-    User.findOne({ username: username })
+    User.authorize(req.body.username, req.body.password)
         .then(user => {
-            console.log(user);
-            if(user) {
-                if(user.checkPassword(password)) {
-                    registerUser(user);
-                } else {
-                    next(new HttpError(403, "Wrong password"))
-                }
-            } else {
-                const user = new User({ username: username, password: password });
-                user.save()
-                    .then(registerUser)
-                    .catch(err => { log.error(err); next(err); })
-            }
+            req.session.user = user._id;
+            res.send({ });
         })
-        .catch(err => next(err))
+        .catch(err => {
+            if(err instanceof AuthError) {
+                return next(new HttpError(403, err.message));
+            } else {
+                return next(err);
+            }
+        });
 });
 
 module.exports = router;
