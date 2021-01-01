@@ -4,7 +4,23 @@ const http = require('http');
 const config = require('../config');
 
 module.exports = app => {
-    const server = http.createServer(app).listen(config.get('port'), function(err) {
+    const server = http.createServer(app);
+    const io = require('socket.io')(server);
+
+    io.on('connection', socket => {
+        console.log('SERVER SOCKET CONNECTED');
+        socket.emit('event', { hello: 'world' });
+        socket.on('my other event', function(data) {
+            console.log(data);
+        });
+        socket.on('event', data => {
+            console.log('SERVER EVENT', data);
+            socket.emit('my other event', { my: 'data'});
+        });
+        socket.on('disconnect', () => { console.log('SERVER DISCONNECTED'); });
+    });
+
+    server.listen(config.get('port'), function(err) {
         if(err) {
             log.error('Something went wrong');
         } else {
@@ -47,4 +63,3 @@ module.exports = app => {
         debug('Listening on ' + bind);
     }
 };
-
