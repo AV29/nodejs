@@ -4,16 +4,43 @@
 <p>Hello, <%=user.get('username')%></p>
 
 <script src="/socket.io/socket.io.js"></script>
+<div id="room">
+    <ul></ul>
+    <form>
+        <input disabled class="form-control" autocomplete="off" autofocus placeholder="Message...">
+    </form>
+</div>
 <script>
-    const socket = io();
-    socket.on('connect', function() {
-        console.log('CLIENT CONNECTED');
-        socket.emit('my other event', { my: 'data'});
+    const socket = io({
+        reconnectionDelay: 500,
+        reconnectionDelayMax: 500,
+        transports: ['websocket']
     });
-    socket.on('event', function(data) {
-        console.log('CLIENT EVENT', data);
-    });
-    socket.on('disconnect', function() {
-        console.log('CLIENT DISCONNECTED');
-    });
+
+    const form = $('#room form');
+    const ul = $('#room ul');
+    const input = $('#room input');
+
+    socket
+        .on('message', function(text) {
+            $('<li>', { text: text }).appendTo(ul);
+        })
+        .on('connect', function() {
+            console.log('CONNECTION ESTABLISHED');
+            form.on('submit', sendMessage);
+            input.prop('disabled', false);
+        })
+        .on('disconnect', function() {
+            console.log('CONNECTION LOST');
+            form.off('submit', sendMessage);
+            input.prop('disabled', true);
+        });
+
+    function sendMessage() {
+        const text = input.val();
+        socket.emit('message', text);
+        input.val('');
+        return false;
+    }
+
 </script>
