@@ -9,7 +9,7 @@
     }
   },
   "session": {
-    "secret": "qwerty",
+    "secret": "shhhhh",
     "key": "sid",
     "resave": false,
     "saveUninitialized": false,
