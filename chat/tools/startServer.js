@@ -5,7 +5,7 @@ const config = require('../config');
 
 module.exports = app => {
     const server = http.createServer(app);
-    const io = createSocket(server);
+    createSocket(server);
     server.listen(config.get('port'), function(err) {
         if(err) {
             log.error('Something went wrong');

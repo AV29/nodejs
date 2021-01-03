@@ -37,6 +37,9 @@
             form.off('submit', sendMessage);
             input.prop('disabled', true);
         })
+        .on('logout', function() {
+            location.href = '/';
+        })
         .on('error', function(reason) {
             if(reason === 'handshake unauthorized') {
                 printMessage(info, 'You have left the chat!');

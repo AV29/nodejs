@@ -1,3 +1,4 @@
+require('./tools/customEventEmitter');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -33,3 +34,4 @@ applyRoutes(app);
 app.use(require('./middeware/errorHandler'));
 
 startServer(app);
+

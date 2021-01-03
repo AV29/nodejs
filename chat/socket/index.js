@@ -7,15 +7,16 @@ const sessionStore = require('../tools/sessionStore');
 const config = require('../config');
 
 function loadSession(sid) {
-    return sessionStore.get(sid)
+    return sessionStore.get(sid);
 }
 
-function handleSession (handshake, next) {
+function handleSession (handshake, sid, next) {
     return session => {
         if(!session) {
             next(new HttpError(401, "No Session"));
         }
         handshake.session = session;
+        handshake.session.id = sid; // Can't get id of the session from MongoStore sessions collection
         return session;
     }
 }
@@ -52,6 +53,26 @@ module.exports = server => {
         });
     });
 
+    customEmitter.on('session:reload', function(sid) {
+        io.sockets.sockets.forEach(client => {
+            if(client.handshake.session.id !== sid) return;
+            loadSession(sid)
+                .then(session => {
+                    if(!session) {
+                        client.emit('logout');
+                        client.disconnect();
+                        return;
+                    }
+                    client.handshake.session = session;
+                    client.handshake.session.id = sid;
+                })
+                .catch(err => {
+                    client.emit('error', 'server error');
+                    client.disconnect();
+                });
+        });
+    });
+
     io.use((socket, next) => {
         log.info('Parsing cookie...');
         const handshake = socket.handshake;
@@ -60,11 +81,9 @@ module.exports = server => {
         const sid = cookieParser.signedCookie(sidCookie, config.get('session:secret'));
 
         loadSession(sid)
-            .then(handleSession(handshake, next))
+            .then(handleSession(handshake, sid, next))
             .then(loadUser)
             .then(handleUser(handshake, next))
             .catch(next);
     });
-
-    return io;
 };
