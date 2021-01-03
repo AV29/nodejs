@@ -5,7 +5,8 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <div id="room">
-    <ul></ul>
+    <ul id="info"></ul>
+    <ul id="messages"></ul>
     <form>
         <input disabled class="form-control" autocomplete="off" autofocus placeholder="Message...">
     </form>
@@ -18,29 +19,40 @@
     });
 
     const form = $('#room form');
-    const ul = $('#room ul');
+    const messages = $('#messages');
+    const info = $('#info');
     const input = $('#room input');
 
     socket
-        .on('message', function(text) {
-            $('<li>', { text: text }).appendTo(ul);
-        })
+        .on('message', (username, text) => printMessage(messages, `${username}: ${text}`))
+        .on('leave', username => printMessage(info, `${username} has left`))
+        .on('join', username => printMessage(info, `${username} has joined`))
         .on('connect', function() {
-            console.log('CONNECTION ESTABLISHED');
+            printMessage(info, 'CONNECTION ESTABLISHED');
             form.on('submit', sendMessage);
             input.prop('disabled', false);
         })
         .on('disconnect', function() {
-            console.log('CONNECTION LOST');
+            printMessage(info, 'CONNECTION LOST');
             form.off('submit', sendMessage);
             input.prop('disabled', true);
+        })
+        .on('error', function(reason) {
+            if(reason === 'handshake unauthorized') {
+                printMessage(info, 'You have left the chat!');
+            }
         });
 
     function sendMessage() {
         const text = input.val();
         socket.emit('message', text);
+        printMessage(messages, `Me: ${text}`);
         input.val('');
         return false;
+    }
+
+    function printMessage(target, text) {
+        $('<li>', { text: text }).appendTo(target);
     }
 
 </script>

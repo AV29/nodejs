@@ -4,11 +4,10 @@ const path = require('path');
 const logger = require('morgan');
 const applyRoutes = require('./routes/routes');
 const startServer = require('./tools/startServer');
-const mongoose = require('./tools/mongoose');
+const sessionStore = require('./tools/sessionStore');
 const express = require('express');
 const config = require('./config');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
 
 const app = express();
 app.engine('ejs', require('ejs-locals'));
@@ -25,9 +24,7 @@ app.use(session({
     cookie: config.get("session:cookie"),
     resave: config.get("session:resave"),
     saveUninitialized: config.get("session:saveUninitialized"),
-    store: new MongoStore({
-        mongooseConnection: mongoose.connection
-    })
+    store: sessionStore
 }));
 app.use(require('./middeware/loadUser'));
 app.use(require('./middeware/numberOfVisits'));
@@ -36,5 +33,3 @@ applyRoutes(app);
 app.use(require('./middeware/errorHandler'));
 
 startServer(app);
-
-module.exports = app;
