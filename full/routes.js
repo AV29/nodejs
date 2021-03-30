@@ -1,36 +1,38 @@
-const fs = require("fs");
+const users = ["Anton", "Ksu"];
+const getHtml = require("./getHtml");
 
 module.exports = (req, res) => {
-    const { url, method } = req;
+  const { url, method } = req;
 
-    if (url === "/") {
-        res.write("<html>");
-        res.write("<head><title>Simple NodeJS server</title></head>");
-        res.write(
-            "<body><form method='POST' action='/message'><input type='text' name='message'><input type='submit'></form></body>"
-        );
-        res.write("</html>");
-        return res.end();
-    }
+  if (url === "/") {
+    getHtml(
+      res,
+      "<body><form method='POST' action='/create-user'><input type='text' name='username'><input type='submit'></form></body>"
+    );
+    return res.end();
+  }
 
-    if (url === "/message" && method === "POST") {
-        const message = [];
-        req.on("data", (chunk) => {
-            message.push(chunk);
-        });
-        return req.on("end", () => {
-            const parsedMessage = Buffer.concat(message).toString();
-            fs.writeFile("test.txt", parsedMessage.split("=")[1], (err) => {
-                res.statusCode = 302;
-                res.setHeader("Location", "/");
-                return res.end();
-            });
-        });
-    }
-    res.setHeader("Content-Type", "text/html");
-    res.write("<html>");
-    res.write("<head><title>Simple NodeJS server</title></head>");
-    res.write("<h1>Hello from NodeJS server</h1>");
-    res.write("</html>");
-    res.end();
+  if (url === "/create-user" && method === "POST") {
+    const data = [];
+    req.on("data", (chunk) => {
+      data.push(chunk);
+    });
+    return req.on("end", () => {
+      const parsedMessage = Buffer.concat(data).toString();
+      users.push(parsedMessage.split("=")[1]);
+      res.statusCode = 302;
+      res.setHeader("Location", "/");
+      return res.end();
+    });
+  }
+
+  if (url === "/users") {
+    const body = users.reduce((res, curr) => res + `<li>${curr}</li>`, "");
+    getHtml(res, `<body><ul>${body}</ul></body>`);
+    return res.end();
+  }
+
+  res.setHeader("Content-Type", "text/html");
+  getHtml(res, "<h1>Not found</h1>");
+  res.end();
 };
