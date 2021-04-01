@@ -1,5 +1,5 @@
-const db = require('db');
-const log = require('logger')(module);
+const db = require('ws-chat/start/db');
+const log = require('ws-chat/start/logger')(module);
 const User = require('./user');
 
 db.connect();
