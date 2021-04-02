@@ -4,6 +4,7 @@
   "description": "Practising in Node JS",
   "main": "app.js",
   "scripts": {
+    "prestart": "prettier --write .",
     "start": "nodemon app.js",
     "debug": "nodemon --inspect app.js"
   },
