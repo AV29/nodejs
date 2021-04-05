@@ -6,7 +6,6 @@ router.get("/", (req, res) => {
   res.render("shop", {
     pageTitle: "Shop",
     products: products,
-    hasProducts: products.length > 0,
     path: "/",
   });
 });
