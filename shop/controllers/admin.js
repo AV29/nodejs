@@ -17,7 +17,8 @@ module.exports.getProducts = async (req, res) => {
 };
 
 module.exports.postAddProduct = (req, res, next) => {
-  const product = new Product(req.body.title);
+  const { title, description, imageUrl, price } = req.body;
+  const product = new Product(title, imageUrl, description, price);
   product.save();
   res.redirect("/");
 };
