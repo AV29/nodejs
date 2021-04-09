@@ -25,6 +25,13 @@ module.exports.getCart = async (req, res) => {
   });
 };
 
+module.exports.getOrders = async (req, res) => {
+  res.render("shop/orders", {
+    pageTitle: "Orders",
+    path: "/orders",
+  });
+};
+
 module.exports.getCheckout = async (req, res) => {
   res.render("shop/checkout", {
     pageTitle: "Checkout",
