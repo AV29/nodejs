@@ -7,17 +7,17 @@ module.exports.getAddProduct = (req, res) => {
   });
 };
 
+module.exports.getProducts = async (req, res) => {
+  const products = await Product.fetchAll();
+  res.render("admin/products", {
+    pageTitle: "Admin Products",
+    products: products,
+    path: "admin/products",
+  });
+};
+
 module.exports.postAddProduct = (req, res, next) => {
   const product = new Product(req.body.title);
   product.save();
   res.redirect("/");
-};
-
-module.exports.getProducts = async (req, res) => {
-  const products = await Product.fetchAll();
-  res.render("shop/product-list", {
-    pageTitle: "Shop",
-    products: products,
-    path: "/",
-  });
 };
