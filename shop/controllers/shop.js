@@ -38,7 +38,7 @@ module.exports.getCart = async (req, res) => {
 module.exports.postCart = async (req, res) => {
   const productId = req.body.productId;
   const product = await Product.findById(productId);
-  Cart.addProduct(productId, parseInt(product.price));
+  Cart.addProduct(productId, product.price);
   res.redirect('/cart');
 };
 

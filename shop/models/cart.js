@@ -22,7 +22,7 @@ module.exports = class Cart {
                 cart.products = [...cart.products, updatedProduct];
             }
 
-            cart.totalPrice += productPrice;
+            cart.totalPrice += parseInt(productPrice);
             fs.writeFile(getPathToProducts(), JSON.stringify(cart), err => {
                 console.error(err);
             });
