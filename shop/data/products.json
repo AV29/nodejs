@@ -1,1 +1,9 @@
-[{"title":"The first one","description":"The first book example","imageUrl":"https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg","price":"12.2"}]
+[
+  {
+    "id": "0.123456789123123",
+    "title": "The first one",
+    "description": "The first book example",
+    "imageUrl": "https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg",
+    "price": "12.2"
+  }
+]

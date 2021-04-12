@@ -20,6 +20,7 @@ module.exports = class Product {
   }
 
   async save() {
+    this.id = Math.random().toString();
     const products = await getProductsFromFile();
     products.push(this);
     fs.writeFile(getPathToProducts(), JSON.stringify(products), (err) => {
@@ -29,5 +30,10 @@ module.exports = class Product {
 
   static fetchAll() {
     return getProductsFromFile();
+  }
+
+  static async findById(id) {
+    const products = await Product.fetchAll();
+    return products.find(product => product.id === id);
   }
 };

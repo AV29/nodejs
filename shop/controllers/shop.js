@@ -18,6 +18,15 @@ module.exports.getProducts = async (req, res) => {
   });
 };
 
+module.exports.getProduct = async (req, res) => {
+  const product = await Product.findById(req.params.productId);
+  res.render("shop/product-detail", {
+    pageTitle: product.title,
+    product: product,
+    path: "/product-detail",
+  });
+};
+
 module.exports.getCart = async (req, res) => {
   res.render("shop/cart", {
     pageTitle: "Your Cart",
