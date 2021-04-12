@@ -23,7 +23,7 @@ module.exports.getProduct = async (req, res) => {
   res.render("shop/product-detail", {
     pageTitle: product.title,
     product: product,
-    path: "/product-detail",
+    path: "/products",
   });
 };
 
@@ -32,6 +32,12 @@ module.exports.getCart = async (req, res) => {
     pageTitle: "Your Cart",
     path: "/cart",
   });
+};
+
+module.exports.postCart = async (req, res) => {
+  const productId = req.body.productId;
+  console.log(productId);
+  res.redirect('/cart');
 };
 
 module.exports.getOrders = async (req, res) => {
