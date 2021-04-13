@@ -1,58 +1,57 @@
-const Product = require("../models/product");
-const Cart = require("../models/cart");
+const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 module.exports.getIndex = async (req, res) => {
-  const products = await Product.fetchAll();
-  res.render("shop/index", {
-    pageTitle: "Shop",
-    products: products,
-    path: "/",
-  });
+    const products = await Product.fetchAll();
+    res.render('shop/index', {
+        pageTitle: 'Shop',
+        products: products,
+        path: '/'
+    });
 };
 
 module.exports.getProducts = async (req, res) => {
-  const products = await Product.fetchAll();
-  res.render("shop/product-list", {
-    pageTitle: "All Products",
-    products: products,
-    path: "/products",
-  });
+    const products = await Product.fetchAll();
+    res.render('shop/product-list', {
+        pageTitle: 'All Products',
+        products: products,
+        path: '/products'
+    });
 };
 
 module.exports.getProduct = async (req, res) => {
-  const product = await Product.findById(req.params.productId);
-  res.render("shop/product-detail", {
-    pageTitle: product.title,
-    product: product,
-    path: "/products",
-  });
+    const product = await Product.findById(req.params.productId);
+    res.render('shop/product-detail', {
+        pageTitle: product.title,
+        product: product,
+        path: '/products'
+    });
 };
 
 module.exports.getCart = async (req, res) => {
-  res.render("shop/cart", {
-    pageTitle: "Your Cart",
-    path: "/cart",
-  });
+    res.render('shop/cart', {
+        pageTitle: 'Your Cart',
+        path: '/cart'
+    });
 };
 
 module.exports.postCart = async (req, res) => {
-  const productId = req.body.productId;
-  const product = await Product.findById(productId);
-  Cart.addProduct(productId, product.price);
-  res.redirect('/cart');
+    const productId = req.body.productId;
+    const product = await Product.findById(productId);
+    Cart.addProduct(productId, product.price);
+    res.redirect('/cart');
 };
 
 module.exports.getOrders = async (req, res) => {
-
-  res.render("shop/orders", {
-    pageTitle: "Orders",
-    path: "/orders",
-  });
+    res.render('shop/orders', {
+        pageTitle: 'Orders',
+        path: '/orders'
+    });
 };
 
 module.exports.getCheckout = async (req, res) => {
-  res.render("shop/checkout", {
-    pageTitle: "Checkout",
-    path: "/checkout",
-  });
+    res.render('shop/checkout', {
+        pageTitle: 'Checkout',
+        path: '/checkout'
+    });
 };
