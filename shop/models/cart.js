@@ -5,11 +5,14 @@ const pathToCart = path.join(rootDir, 'data', 'cart.json');
 
 module.exports = class Cart {
     static async addProduct(id, productPrice) {
-        let cart;
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async resolve => {
+            let cart = {};
             try {
                 const fileContent = await fs.readFile(pathToCart);
                 cart = JSON.parse(fileContent);
+            } catch (err) {
+                cart = { products: [], totalPrice: 0 };
+            } finally {
                 const existingProductIndex = cart.products.findIndex(product => product.id === id);
                 const existingProduct = cart.products[existingProductIndex];
                 let updatedProduct;
@@ -21,11 +24,7 @@ module.exports = class Cart {
                     updatedProduct = { id: id, qty: 1 };
                     cart.products = [...cart.products, updatedProduct];
                 }
-
                 cart.totalPrice += parseInt(productPrice);
-            } catch(err) {
-                cart = { products: [], totalPrice: 0 };
-            } finally {
                 await fs.writeFile(pathToCart, JSON.stringify(cart));
                 resolve(cart);
             }
