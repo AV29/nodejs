@@ -19,7 +19,7 @@ exports.getProducts = async (req, res, next) => {
     res.render('admin/products', {
         pageTitle: 'Admin Products',
         products: products,
-        path: 'admin/products'
+        path: '/admin/products'
     });
 };
 
@@ -32,7 +32,8 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.postDeleteProduct = async (req, res, next) => {
     const { productId } = req.body;
-    await Product.deleteById(productId);
+    const id = await Product.deleteById(productId);
+    console.log(id);
     res.redirect('/admin/products');
 };
 

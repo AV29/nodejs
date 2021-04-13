@@ -52,6 +52,13 @@ exports.postCart = async (req, res) => {
     res.redirect('/cart');
 };
 
+exports.postDeleteCartProduct = async (req, res, next) => {
+    const productId = req.body.productId;
+    const product = await Product.findById(productId);
+    await Cart.deleteProduct(productId, product.price);
+    res.redirect('/cart');
+};
+
 exports.getOrders = async (req, res) => {
     res.render('shop/orders', {
         pageTitle: 'Orders',

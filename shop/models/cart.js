@@ -32,19 +32,20 @@ module.exports = class Cart {
     }
 
     static async deleteProduct(id, productPrice) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const fileContent = await fs.readFile(pathToCart);
-                const updatedCart = { ...JSON.parse(fileContent) };
-                const product = updatedCart.products.find(prod => prod.id === id);
-                updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
-                updatedCart.totalPrice -= product.qnty * productPrice;
-                await fs.writeFile(pathToCart, JSON.stringify(updatedCart));
-                resolve(id);
-            } catch (err) {
-                reject(err);
+        try {
+            const fileContent = await fs.readFile(pathToCart);
+            const updatedCart = JSON.parse(fileContent);
+            const product = updatedCart.products.find(prod => prod.id === id);
+            if(!product) {
+                return null;
             }
-        });
+            updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
+            updatedCart.totalPrice -= product.qty * productPrice;
+            await fs.writeFile(pathToCart, JSON.stringify(updatedCart));
+            return id;
+        } catch (err) {
+            throw err;
+        }
     }
 
     static async getCart() {

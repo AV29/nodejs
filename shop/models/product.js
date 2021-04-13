@@ -4,15 +4,14 @@ const rootDir = require('../utils/path');
 const Cart = require('./cart');
 const pathToProducts = path.join(rootDir, 'data', 'products.json');
 
-const getProductsFromFile = () =>
-    new Promise(async resolve => {
-        try {
-            const fileContent = await fs.readFile(pathToProducts);
-            resolve(JSON.parse(fileContent));
-        } catch (err) {
-            resolve([]);
-        }
-    });
+const getProductsFromFile = async () => {
+    try {
+        const fileContent = await fs.readFile(pathToProducts);
+        return JSON.parse(fileContent);
+    } catch (err) {
+        return [];
+    }
+};
 
 module.exports = class Product {
     constructor(id, title, imageUrl, description, price) {
@@ -33,7 +32,7 @@ module.exports = class Product {
             try {
                 await fs.writeFile(pathToProducts, JSON.stringify(updatedProducts));
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         } else {
             this.id = Math.random().toString();
@@ -41,7 +40,7 @@ module.exports = class Product {
             try {
                 await fs.writeFile(pathToProducts, JSON.stringify(products));
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         }
     }
@@ -56,17 +55,15 @@ module.exports = class Product {
     }
 
     static async deleteById(id) {
-        return new Promise(async (resolve, reject) => {
-            const products = await Product.fetchAll();
-            const product = products.find(prod => prod.id === id);
-            const updatedProducts = products.filter(product => product.id !== id);
-            try {
-                await fs.writeFile(pathToProducts, JSON.stringify(updatedProducts));
-                await Cart.deleteProduct(id, product.price);
-                resolve(id);
-            } catch (err) {
-                reject(err);
-            }
-        });
+        const products = await Product.fetchAll();
+        const product = products.find(prod => prod.id === id);
+        const updatedProducts = products.filter(product => product.id !== id);
+        try {
+            await fs.writeFile(pathToProducts, JSON.stringify(updatedProducts));
+            await Cart.deleteProduct(id, product.price);
+            return id;
+        } catch (err) {
+            throw err;
+        }
     }
 };
