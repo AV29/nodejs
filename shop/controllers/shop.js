@@ -29,6 +29,7 @@ module.exports.getProduct = async (req, res) => {
 };
 
 module.exports.getCart = async (req, res) => {
+    const cart = Cart.getCart();
     res.render('shop/cart', {
         pageTitle: 'Your Cart',
         path: '/cart'
@@ -38,7 +39,7 @@ module.exports.getCart = async (req, res) => {
 module.exports.postCart = async (req, res) => {
     const productId = req.body.productId;
     const product = await Product.findById(productId);
-    Cart.addProduct(productId, product.price);
+    await Cart.addProduct(productId, product.price);
     res.redirect('/cart');
 };
 

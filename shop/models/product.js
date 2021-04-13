@@ -2,14 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const rootDir = require('../utils/path');
 const Cart = require('./cart');
-
-const getPathToProducts = () => path.join(rootDir, 'data', 'products.json');
+const pathToProducts = () => path.join(rootDir, 'data', 'products.json');
 
 const getProductsFromFile = () =>
-    new Promise(resolve => {
-        fs.readFile(getPathToProducts(), (err, fileContent) => {
-            resolve(err ? [] : JSON.parse(fileContent));
-        });
+    new Promise(async resolve => {
+        try {
+            const fileContent = await fs.readFile(pathToProducts);
+            resolve(JSON.parse(fileContent));
+        } catch (err) {
+            resolve([]);
+        }
     });
 
 module.exports = class Product {
@@ -28,15 +30,19 @@ module.exports = class Product {
             const existingProductIndex = products.findIndex(prod => prod.id === this.id);
             const updatedProducts = [...products];
             updatedProducts[existingProductIndex] = this;
-            fs.writeFile(getPathToProducts(), JSON.stringify(updatedProducts), err => {
-                if (err) console.log(err);
-            });
+            try {
+                await fs.writeFile(pathToProducts, JSON.stringify(updatedProducts));
+            } catch (err) {
+                console.log(err);
+            }
         } else {
             this.id = Math.random().toString();
             products.push(this);
-            fs.writeFile(getPathToProducts(), JSON.stringify(products), err => {
-                if (err) console.log(err);
-            });
+            try {
+                await fs.writeFile(pathToProducts, JSON.stringify(products));
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
 
@@ -50,12 +56,16 @@ module.exports = class Product {
     }
 
     static async deleteById(id) {
-        const products = await Product.fetchAll();
-        const product = products.find(prod => prod.id === id);
-        const updatedProducts = products.filter(product => product.id !== id);
-        fs.writeFile(getPathToProducts(), JSON.stringify(updatedProducts), err => {
-            if (!err) {
-                Cart.deleteProduct(id, product.price);
+        return new Promise(async (resolve, reject) => {
+            const products = await Product.fetchAll();
+            const product = products.find(prod => prod.id === id);
+            const updatedProducts = products.filter(product => product.id !== id);
+            try {
+                await fs.writeFile(pathToProducts, JSON.stringify(updatedProducts));
+                await Cart.deleteProduct(id, product.price);
+                resolve(id);
+            } catch (err) {
+                reject(err);
             }
         });
     }
