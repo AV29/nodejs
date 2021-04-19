@@ -4,7 +4,16 @@ const bodyParser = require('body-parser');
 const rootDir = require('./utils/path');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const db = require('./utils/database');
 const errorController = require('./controllers/error');
+
+db.execute('SELECT * FROM products')
+    .then(data => {
+        console.log(data);
+    })
+    .catch(err => {
+        console.log(err);
+    });
 
 const app = express();
 
