@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 
 exports.getIndex = async (req, res) => {
-    const products = await Product.fetchAll();
+    const [products] = await Product.fetchAll();
     res.render('shop/index', {
         pageTitle: 'Shop',
         products: products,
@@ -11,7 +11,7 @@ exports.getIndex = async (req, res) => {
 };
 
 exports.getProducts = async (req, res) => {
-    const products = await Product.fetchAll();
+    const [products] = await Product.fetchAll();
     res.render('shop/product-list', {
         pageTitle: 'All Products',
         products: products,
@@ -30,7 +30,7 @@ exports.getProduct = async (req, res) => {
 
 exports.getCart = async (req, res) => {
     const cart = await Cart.getCart();
-    const products = await Product.fetchAll();
+    const [products] = await Product.fetchAll();
     const cartProducts = [];
     for (const product of products) {
         const cartProduct = cart.products.find(prod => prod.id === product.id);
