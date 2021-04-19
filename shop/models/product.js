@@ -23,7 +23,11 @@ module.exports = class Product {
         return db.execute('SELECT * FROM products');
     }
 
-    static async findById(id) {}
+    static async findById(id) {
+        return db.execute('SELECT * FROM products WHERE id = ?', [id]);
+    }
 
-    static async deleteById(id) {}
+    static async deleteById(id) {
+        return db.execute('DELETE FROM products where id = ?', [id]);
+    }
 };

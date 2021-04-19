@@ -32,12 +32,12 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.postDeleteProduct = async (req, res, next) => {
     const { productId } = req.body;
-    const id = await Product.deleteById(productId);
+    await Product.deleteById(productId);
     res.redirect('/admin/products');
 };
 
 exports.getEditProduct = async (req, res, next) => {
-    const product = await Product.findById(req.params.productId);
+    const [[product]] = await Product.findById(req.params.productId);
     if (!product) {
         return res.status(404).render('404', {
             pageTitle: 'Page Not Found',

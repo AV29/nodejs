@@ -20,7 +20,7 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.getProduct = async (req, res) => {
-    const product = await Product.findById(req.params.productId);
+    const [[product]] = await Product.findById(req.params.productId);
     res.render('shop/product-detail', {
         pageTitle: product.title,
         product: product,
@@ -47,14 +47,14 @@ exports.getCart = async (req, res) => {
 
 exports.postCart = async (req, res) => {
     const productId = req.body.productId;
-    const product = await Product.findById(productId);
+    const [[product]] = await Product.findById(productId);
     await Cart.addProduct(productId, product.price);
     res.redirect('/cart');
 };
 
 exports.postDeleteCartProduct = async (req, res, next) => {
     const productId = req.body.productId;
-    const product = await Product.findById(productId);
+    const [[product]] = await Product.findById(productId);
     await Cart.deleteProduct(productId, product.price);
     res.redirect('/cart');
 };
