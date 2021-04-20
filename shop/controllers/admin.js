@@ -15,47 +15,75 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = async (req, res, next) => {
-    const [products, fieldData] = await Product.fetchAll();
-    res.render('admin/products', {
-        pageTitle: 'Admin Products',
-        products: products,
-        path: '/admin/products'
-    });
+    try {
+        const products = await Product.findAll();
+        res.render('admin/products', {
+            pageTitle: 'Admin Products',
+            products: products,
+            path: '/admin/products'
+        });
+    } catch(err) {
+        console.error(err);
+    }
 };
 
 exports.postEditProduct = async (req, res, next) => {
-    const { productId, title, description, price, imageUrl } = req.body;
-    const updatedProduct = new Product(productId, title, imageUrl, description, price);
-    await updatedProduct.save();
-    res.redirect('/admin/products');
+    try {
+        const { productId, title, description, price, imageUrl } = req.body;
+        const product = await Product.findByPk(productId);
+        product.title = title;
+        product.description = description;
+        product.price = price;
+        product.imageUrl = imageUrl;
+        await product.save();
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 exports.postDeleteProduct = async (req, res, next) => {
-    const { productId } = req.body;
-    await Product.deleteById(productId);
-    res.redirect('/admin/products');
+    try {
+        const product = await Product.findByPk(req.body.productId);
+        await product.destroy();
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 exports.getEditProduct = async (req, res, next) => {
-    const [[product]] = await Product.findById(req.params.productId);
-    if (!product) {
-        return res.status(404).render('404', {
-            pageTitle: 'Page Not Found',
-            path: '/',
-            errorMessage: `There is no product with ID: ${req.params.productId}!`
+    try {
+        const product = await Product.findByPk(req.params.productId);
+        if (!product) {
+            return res.status(404).render('404', {
+                pageTitle: 'Page Not Found',
+                path: '/',
+                errorMessage: `There is no product with ID: ${req.params.productId}!`
+            });
+        }
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            isEditing: true,
+            product: product
         });
+    } catch (err) {
+        console.error(err);
     }
-    res.render('admin/edit-product', {
-        pageTitle: 'Edit Product',
-        path: '/admin/edit-product',
-        isEditing: true,
-        product: product
-    });
 };
 
 exports.postAddProduct = async (req, res, next) => {
     const { title, description, imageUrl, price } = req.body;
-    const product = new Product(null, title, imageUrl, description, price);
-    await product.save();
-    res.redirect('/');
+    try {
+        await Product.create({
+            title: title,
+            description: description,
+            imageUrl: imageUrl,
+            price: price
+        });
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error(err);
+    }
 };
