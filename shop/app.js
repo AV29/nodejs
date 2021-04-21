@@ -37,13 +37,17 @@ User.hasOne(Cart);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
+let user = null;
+
 sequelize
-    .sync({ force: true })
+    .sync()
     .then(() => User.findByPk(1))
     .then(user => (!user ? User.create({ name: 'Anton', email: 'snumber29@gmail.com' }) : Promise.resolve(user)))
-    .then(user => {
-        return user.createCart();
+    .then(result => {
+        user = result;
+        return user.getCart();
     })
+    .then(cart => (!cart ? user.createCart() : Promise.resolve(cart)))
     .then(cart => {
         app.listen(3000);
     })
