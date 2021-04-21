@@ -82,12 +82,15 @@ exports.postDeleteCartProduct = async (req, res, next) => {
 exports.postOrders = async (req, res) => {
     try {
         const cart = await req.user.getCart();
-        const products = await cart.getProducts();
         const order = await req.user.createOrder();
-        await order.addProducts(products.map(prod => {
-            prod.orderItem = { quantity: prod.cartItem.quantity };
-            return prod;
-        }));
+        const products = await cart.getProducts();
+        await order.addProducts(
+            products.map(prod => {
+                prod.orderItem = { quantity: prod.cartItem.quantity };
+                return prod;
+            })
+        );
+        await cart.setProducts(null);
         res.redirect('/orders');
     } catch (err) {
         console.error(err);
@@ -95,15 +98,14 @@ exports.postOrders = async (req, res) => {
 };
 
 exports.getOrders = async (req, res) => {
-    res.render('shop/orders', {
-        pageTitle: 'Orders',
-        path: '/orders'
-    });
-};
-
-exports.getCheckout = async (req, res) => {
-    res.render('shop/checkout', {
-        pageTitle: 'Checkout',
-        path: '/checkout'
-    });
+    try {
+        const orders = await req.user.getOrders({ include: ['products'] });
+        res.render('shop/orders', {
+            pageTitle: 'Orders',
+            path: '/orders',
+            orders: orders
+        });
+    } catch (err) {
+        console.error(err);
+    }
 };
