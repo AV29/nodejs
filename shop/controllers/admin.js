@@ -22,7 +22,7 @@ exports.getProducts = async (req, res, next) => {
             products: products,
             path: '/admin/products'
         });
-    } catch(err) {
+    } catch (err) {
         console.error(err);
     }
 };
