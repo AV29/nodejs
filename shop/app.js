@@ -17,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(async (req, res, next) => {
     try {
         req.user = await User.findByPk(1);
+        next();
     } catch (err) {
         console.error(err);
     }

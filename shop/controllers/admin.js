@@ -16,7 +16,7 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
     try {
-        const products = await Product.findAll();
+        const products = await req.user.getProducts();
         res.render('admin/products', {
             pageTitle: 'Admin Products',
             products: products,
@@ -76,7 +76,8 @@ exports.getEditProduct = async (req, res, next) => {
 exports.postAddProduct = async (req, res, next) => {
     const { title, description, imageUrl, price } = req.body;
     try {
-        await Product.create({
+        // Method added by sequelize
+        await req.user.createProduct({
             title: title,
             description: description,
             imageUrl: imageUrl,
