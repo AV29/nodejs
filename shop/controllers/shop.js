@@ -42,19 +42,12 @@ exports.getProduct = async (req, res) => {
 
 exports.getCart = async (req, res) => {
     try {
-        const cart = await Cart.getCart();
-        const products = await Product.findAll();
-        const cartProducts = [];
-        for (const product of products) {
-            const cartProduct = cart.products.find(prod => prod.id === product.id);
-            if (cartProduct) {
-                cartProducts.push({ data: product, qty: cartProduct.qty });
-            }
-        }
+        const cart = await req.user.getCart();
+        const products = await cart.getProducts();
         res.render('shop/cart', {
             pageTitle: 'Your Cart',
             path: '/cart',
-            products: cartProducts
+            products: products
         });
     } catch (err) {
         console.error(err);
@@ -64,8 +57,10 @@ exports.getCart = async (req, res) => {
 exports.postCart = async (req, res) => {
     try {
         const productId = req.body.productId;
-        const product = await Product.findByPk(productId);
-        await Cart.addProduct(productId, product.price);
+        const cart = await req.user.getCart();
+        const [product] = await cart.getProducts({ where: { id: productId } });
+        const tableProduct = await Product.findByPk(productId);
+        await cart.addProduct(tableProduct, { through: { quantity: product ? product.cartItem.quantity + 1 : 1 } });
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
