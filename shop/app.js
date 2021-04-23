@@ -2,64 +2,22 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const rootDir = require('./utils/path');
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
+// const adminRoutes = require('./routes/admin');
+// const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
-const sequelize = require('./utils/database');
-const User = require('./models/user');
-const Product = require('./models/product');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cartItem');
-const Order = require('./models/order');
-const OrderItem = require('./models/orderItem');
-
+const mongoConnect = require('./utils/database');
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(rootDir, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(async (req, res, next) => {
-    try {
-        req.user = await User.findByPk(1);
-        next();
-    } catch (err) {
-        console.error(err);
-    }
-});
-app.use('/admin', adminRoutes);
-app.use(shopRoutes);
+// app.use('/admin', adminRoutes);
+// app.use(shopRoutes);
 app.use(errorController.get404);
 
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-User.hasMany(Product);
-
-Cart.belongsTo(User);
-User.hasOne(Cart);
-
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-
-Order.belongsTo(User);
-User.hasMany(Order);
-
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
-
-let user = null;
-
-sequelize
-    //.sync( {force :true })
-    .sync()
-    .then(() => User.findByPk(1))
-    .then(user => (!user ? User.create({ name: 'Anton', email: 'snumber29@gmail.com' }) : Promise.resolve(user)))
+mongoConnect()
     .then(result => {
-        user = result;
-        return user.getCart();
-    })
-    .then(cart => (!cart ? user.createCart() : Promise.resolve(cart)))
-    .then(cart => {
+        console.log(result);
         app.listen(3000);
     })
-    .catch(err => {
-        console.error(err);
-    });
+    .catch(err => console.error(err));
