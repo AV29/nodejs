@@ -1,9 +1,9 @@
 const Product = require('../models/product');
-const Order = require('../models/order');
+//const Order = require('../models/order');
 
 exports.getIndex = async (req, res) => {
     try {
-        const products = await Product.findAll();
+        const products = await Product.fetchAll();
         res.render('shop/index', {
             pageTitle: 'Shop',
             products: products,
@@ -16,7 +16,7 @@ exports.getIndex = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
     try {
-        const products = await Product.findAll();
+        const products = await Product.fetchAll();
         res.render('shop/product-list', {
             pageTitle: 'All Products',
             products: products,

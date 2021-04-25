@@ -25,18 +25,18 @@ exports.postAddProduct = async (req, res, next) => {
     }
 };
 
-// exports.getProducts = async (req, res, next) => {
-//     try {
-//         const products = await req.user.getProducts();
-//         res.render('admin/products', {
-//             pageTitle: 'Admin Products',
-//             products: products,
-//             path: '/admin/products'
-//         });
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };
+exports.getProducts = async (req, res, next) => {
+    try {
+        const products = await Product.fetchAll();
+        res.render('admin/products', {
+            pageTitle: 'Admin Products',
+            products: products,
+            path: '/admin/products'
+        });
+    } catch (err) {
+        console.error(err);
+    }
+};
 
 // exports.postEditProduct = async (req, res, next) => {
 //     try {
