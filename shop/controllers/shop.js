@@ -29,7 +29,7 @@ exports.getProducts = async (req, res) => {
 
 exports.getProduct = async (req, res) => {
     try {
-        const product = await Product.findByPk(req.params.productId);
+        const product = await Product.findById(req.params.productId);
         res.render('shop/product-detail', {
             pageTitle: product.title,
             product: product,
@@ -59,7 +59,7 @@ exports.postCart = async (req, res) => {
         const productId = req.body.productId;
         const cart = await req.user.getCart();
         const [product] = await cart.getProducts({ where: { id: productId } });
-        const tableProduct = await Product.findByPk(productId);
+        const tableProduct = await Product.findById(productId);
         await cart.addProduct(tableProduct, { through: { quantity: product ? product.cartItem.quantity + 1 : 1 } });
         res.redirect('/cart');
     } catch (err) {
