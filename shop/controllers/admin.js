@@ -70,12 +70,11 @@ exports.getEditProduct = async (req, res, next) => {
     }
 };
 
-// exports.postDeleteProduct = async (req, res, next) => {
-//     try {
-//         const product = await Product.findByPk(req.body.productId);
-//         await product.destroy();
-//         res.redirect('/admin/products');
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };
+exports.postDeleteProduct = async (req, res, next) => {
+    try {
+        await Product.deleteById(req.body.productId);
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error(err);
+    }
+};
