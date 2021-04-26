@@ -2,7 +2,8 @@ const mongodb = require('mongodb');
 const { getDb } = require('../utils/database');
 
 class Product {
-    constructor(title, price, description, imageUrl) {
+    constructor(title, price, description, imageUrl, id) {
+        this._id = id;
         this.title = title;
         this.price = price;
         this.description = description;
@@ -12,7 +13,14 @@ class Product {
     async save() {
         try {
             const db = getDb();
-            return await db.collection('products').insertOne(this);
+            return this._id
+                ? await db.collection('products').updateOne(
+                      { _id: new mongodb.ObjectId(this._id) },
+                      {
+                          $set: this
+                      }
+                  )
+                : await db.collection('products').insertOne(this);
         } catch (err) {
             console.error(err);
         }

@@ -1,3 +1,4 @@
+const mongodb = require('mongodb');
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
@@ -38,47 +39,43 @@ exports.getProducts = async (req, res, next) => {
     }
 };
 
-// exports.postEditProduct = async (req, res, next) => {
-//     try {
-//         const { productId, title, description, price, imageUrl } = req.body;
-//         const product = await Product.findByPk(productId);
-//         product.title = title;
-//         product.description = description;
-//         product.price = price;
-//         product.imageUrl = imageUrl;
-//         await product.save();
-//         res.redirect('/admin/products');
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };
+exports.postEditProduct = async (req, res, next) => {
+    try {
+        const { productId, title, description, price, imageUrl } = req.body;
+        const product = new Product(title, price, description, imageUrl, new mongodb.ObjectId(productId));
+        await product.save();
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+exports.getEditProduct = async (req, res, next) => {
+    try {
+        const product = await Product.findById(req.params.productId);
+        if (!product) {
+            return res.status(404).render('404', {
+                pageTitle: 'Page Not Found',
+                path: '/',
+                errorMessage: `There is no product with ID: ${req.params.productId}!`
+            });
+        }
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            isEditing: true,
+            product: product
+        });
+    } catch (err) {
+        console.error(err);
+    }
+};
 
 // exports.postDeleteProduct = async (req, res, next) => {
 //     try {
 //         const product = await Product.findByPk(req.body.productId);
 //         await product.destroy();
 //         res.redirect('/admin/products');
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };
-
-// exports.getEditProduct = async (req, res, next) => {
-//     try {
-//         const product = await Product.findByPk(req.params.productId);
-//         if (!product) {
-//             return res.status(404).render('404', {
-//                 pageTitle: 'Page Not Found',
-//                 path: '/',
-//                 errorMessage: `There is no product with ID: ${req.params.productId}!`
-//             });
-//         }
-//         res.render('admin/edit-product', {
-//             pageTitle: 'Edit Product',
-//             path: '/admin/edit-product',
-//             isEditing: true,
-//             product: product
-//         });
 //     } catch (err) {
 //         console.error(err);
 //     }
