@@ -3,7 +3,7 @@ const { getDb } = require('../utils/database');
 
 class Product {
     constructor(title, price, description, imageUrl, id) {
-        this._id = id;
+        this._id = new mongodb.ObjectId(id);
         this.title = title;
         this.price = price;
         this.description = description;
@@ -15,7 +15,7 @@ class Product {
             const db = getDb();
             return this._id
                 ? await db.collection('products').updateOne(
-                      { _id: new mongodb.ObjectId(this._id) },
+                      { _id: this._id },
                       {
                           $set: this
                       }
