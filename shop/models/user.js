@@ -19,7 +19,7 @@ class User {
     }
 
     async addToCart(product) {
-        const cartProductIndex = this.cart.items.findIndex(({ productId }) => productId === product._id);
+        const cartProductIndex = this.cart.items.findIndex(({ productId }) => productId.toString() === product._id.toString());
 
         const updatedCartItems = [...this.cart.items];
 
