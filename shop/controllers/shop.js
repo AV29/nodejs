@@ -57,10 +57,12 @@ exports.getCart = async (req, res) => {
 exports.postCart = async (req, res) => {
     try {
         const productId = req.body.productId;
-        const cart = await req.user.getCart();
-        const [product] = await cart.getProducts({ where: { id: productId } });
-        const tableProduct = await Product.findById(productId);
-        await cart.addProduct(tableProduct, { through: { quantity: product ? product.cartItem.quantity + 1 : 1 } });
+        const product = await Product.findById(productId);
+        await req.user.addToCart(product);
+        // const cart = await req.user.getCart();
+        // const [product] = await cart.getProducts({ where: { id: productId } });
+        // const tableProduct = await Product.findById(productId);
+        // await cart.addProduct(tableProduct, { through: { quantity: product ? product.cartItem.quantity + 1 : 1 } });
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
