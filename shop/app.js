@@ -26,7 +26,6 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-mongoConnect()
-    .then(() => {
-        app.listen(3000);
-    });
+mongoConnect().then(() => {
+    app.listen(3000);
+});

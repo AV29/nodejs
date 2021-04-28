@@ -42,8 +42,7 @@ exports.getProduct = async (req, res) => {
 
 exports.getCart = async (req, res) => {
     try {
-        const cart = await req.user.getCart();
-        const products = await cart.getProducts();
+        const products = await req.user.getCart();
         res.render('shop/cart', {
             pageTitle: 'Your Cart',
             path: '/cart',

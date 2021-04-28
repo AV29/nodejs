@@ -19,7 +19,9 @@ class User {
     }
 
     async addToCart(product) {
-        const cartProductIndex = this.cart.items.findIndex(({ productId }) => productId.toString() === product._id.toString());
+        const cartProductIndex = this.cart.items.findIndex(
+            ({ productId }) => productId.toString() === product._id.toString()
+        );
 
         const updatedCartItems = [...this.cart.items];
 
@@ -36,6 +38,24 @@ class User {
                 $set: { cart: updatedCart }
             }
         );
+    }
+
+    async getCart() {
+        try {
+            const db = getDb();
+            const cartProductIds = this.cart.items.map(item => item.productId);
+            const products = await db
+                .collection('products')
+                .find({ _id: { $in: cartProductIds } })
+                .toArray();
+            return products.map(prod => ({
+                ...prod,
+                quantity: this.cart.items.find(cartItem => cartItem.productId.toString() === prod._id.toString())
+                    .quantity
+            }));
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     static async findById(userId) {
