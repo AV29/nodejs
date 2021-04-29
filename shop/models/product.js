@@ -1,4 +1,5 @@
 const mongodb = require('mongodb');
+const User = require('./user');
 const { getDb } = require('../utils/database');
 
 class Product {
@@ -48,9 +49,10 @@ class Product {
         }
     }
 
-    static async deleteById(prodId) {
+    static async deleteById(prodId, user) {
         try {
             const db = getDb();
+            await user.deleteItemFromCart(prodId);
             return await db.collection('products').deleteOne({ _id: new mongodb.ObjectId(prodId) });
         } catch (err) {
             console.error(err);
