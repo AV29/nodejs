@@ -19,25 +19,29 @@ class User {
     }
 
     async addToCart(product) {
-        const cartProductIndex = this.cart.items.findIndex(
-            ({ productId }) => productId.toString() === product._id.toString()
-        );
+        try {
+            const cartProductIndex = this.cart.items.findIndex(
+                ({ productId }) => productId.toString() === product._id.toString()
+            );
 
-        const updatedCartItems = [...this.cart.items];
+            const updatedCartItems = [...this.cart.items];
 
-        if (cartProductIndex >= 0) {
-            updatedCartItems[cartProductIndex].quantity = this.cart.items[cartProductIndex].quantity + 1;
-        } else {
-            updatedCartItems.push({ productId: mongodb.ObjectId(product._id), quantity: 1 });
-        }
-        const updatedCart = { items: updatedCartItems };
-        const db = getDb();
-        return await db.collection('users').updateOne(
-            { _id: new mongodb.ObjectId(this._id) },
-            {
-                $set: { cart: updatedCart }
+            if (cartProductIndex >= 0) {
+                updatedCartItems[cartProductIndex].quantity = this.cart.items[cartProductIndex].quantity + 1;
+            } else {
+                updatedCartItems.push({ productId: mongodb.ObjectId(product._id), quantity: 1 });
             }
-        );
+            const updatedCart = { items: updatedCartItems };
+            const db = getDb();
+            return await db.collection('users').updateOne(
+                { _id: new mongodb.ObjectId(this._id) },
+                {
+                    $set: { cart: updatedCart }
+                }
+            );
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     async getCart() {
@@ -55,6 +59,21 @@ class User {
             }));
         } catch (err) {
             console.error(err);
+        }
+    }
+
+    async deleteItemFromCart(productId) {
+        try {
+            const updatedCartItems = this.cart.items.filter(item => item.productId !== productId);
+            const db = getDb();
+            return await db.collection('users').updateOne(
+                { _id: new mongodb.ObjectId(this._id) },
+                {
+                    $set: { cart: { items: updatedCartItems } }
+                }
+            );
+        } catch (err) {
+            console.log(err);
         }
     }
 
