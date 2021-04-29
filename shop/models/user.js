@@ -5,7 +5,7 @@ class User {
     constructor(name, email, cart, id) {
         this.name = name;
         this.email = email;
-        this.cart = cart; // { items: [] }
+        this.cart = cart;
         this._id = id;
     }
 
@@ -64,7 +64,7 @@ class User {
 
     async deleteItemFromCart(productId) {
         try {
-            const updatedCartItems = this.cart.items.filter(item => item.productId !== productId);
+            const updatedCartItems = this.cart.items.filter(item => item.productId.toString() !== productId.toString());
             const db = getDb();
             return await db.collection('users').updateOne(
                 { _id: new mongodb.ObjectId(this._id) },
@@ -74,6 +74,43 @@ class User {
             );
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    async addOrder() {
+        try {
+            const db = getDb();
+            const products = await this.getCart();
+            const order = {
+                items: products,
+                user: {
+                    _id: new mongodb.ObjectId(this._id),
+                    name: this.name,
+                    email: this.email
+                }
+            }
+            await db.collection('orders').insertOne(order);
+            this.cart = { items: [] };
+            return await db.collection('users').updateOne(
+                { _id: new mongodb.ObjectId(this._id) },
+                {
+                    $set: { cart: this.cart }
+                }
+            );
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async getOrders() {
+        try {
+            const db = getDb();
+            return await db
+                .collection('orders')
+                .find()
+                .toArray();
+        } catch (err) {
+            console.error(err);
         }
     }
 

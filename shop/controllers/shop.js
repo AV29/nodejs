@@ -73,18 +73,9 @@ exports.postDeleteCartProduct = async (req, res, next) => {
     }
 };
 
-exports.postOrders = async (req, res) => {
+exports.postOrder = async (req, res) => {
     try {
-        const cart = await req.user.getCart();
-        const order = await req.user.createOrder();
-        const products = await cart.getProducts();
-        await order.addProducts(
-            products.map(prod => {
-                prod.orderItem = { quantity: prod.cartItem.quantity };
-                return prod;
-            })
-        );
-        await cart.setProducts(null);
+        await req.user.addOrder();
         res.redirect('/orders');
     } catch (err) {
         console.error(err);
@@ -93,7 +84,7 @@ exports.postOrders = async (req, res) => {
 
 exports.getOrders = async (req, res) => {
     try {
-        const orders = await req.user.getOrders({ include: ['products'] });
+        const orders = await req.user.getOrders();
         res.render('shop/orders', {
             pageTitle: 'Orders',
             path: '/orders',
