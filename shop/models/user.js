@@ -88,7 +88,7 @@ class User {
                     name: this.name,
                     email: this.email
                 }
-            }
+            };
             await db.collection('orders').insertOne(order);
             this.cart = { items: [] };
             return await db.collection('users').updateOne(
@@ -107,7 +107,7 @@ class User {
             const db = getDb();
             return await db
                 .collection('orders')
-                .find()
+                .find({ 'user._id': new mongodb.ObjectId(this._id) })
                 .toArray();
         } catch (err) {
             console.error(err);
