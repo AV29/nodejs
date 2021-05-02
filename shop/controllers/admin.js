@@ -27,7 +27,7 @@ exports.postAddProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
     try {
-        const products = await Product.fetchAll();
+        const products = await Product.find();
         res.render('admin/products', {
             pageTitle: 'Admin Products',
             products: products,
