@@ -1,15 +1,33 @@
-// const mongodb = require('mongodb');
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const productSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    imageUrl: {
+        type: String,
+        required: true
+    }
+});
+
+
 // const User = require('./user');
 // const { getDb } = require('../utils/database');
 //
 // class Product {
 //     constructor(title, price, description, imageUrl, id, userId) {
 //         this._id = id ? new mongodb.ObjectId(id) : null;
-//         this.title = title;
-//         this.price = price;
-//         this.description = description;
-//         this.imageUrl = imageUrl;
-//         this.userId = userId;
 //     }
 //
 //     async save() {
