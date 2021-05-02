@@ -1,12 +1,11 @@
 const express = require('express');
-const mongodb = require('mongodb');
+const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const rootDir = require('./utils/path');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
-const { mongoConnect } = require('./utils/database');
 const User = require('./models/user');
 const app = express();
 
@@ -26,6 +25,14 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-mongoConnect().then(() => {
-    app.listen(3000);
-});
+mongoose
+    .connect(
+        `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.6o14s.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
+        { useNewUrlParser: true, useUnifiedTopology: true }
+    )
+    .then(() => {
+        app.listen(3000);
+    })
+    .catch(err => {
+        console.log(err);
+    });
