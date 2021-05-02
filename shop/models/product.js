@@ -21,15 +21,12 @@ const productSchema = new Schema({
     }
 });
 
+module.exports = mongoose.model('Product', productSchema);
+
 
 // const User = require('./user');
-// const { getDb } = require('../utils/database');
 //
 // class Product {
-//     constructor(title, price, description, imageUrl, id, userId) {
-//         this._id = id ? new mongodb.ObjectId(id) : null;
-//     }
-//
 //     async save() {
 //         try {
 //             const db = getDb();
@@ -77,5 +74,3 @@ const productSchema = new Schema({
 //         }
 //     }
 // }
-//
-// module.exports = Product;
