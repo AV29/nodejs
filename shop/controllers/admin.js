@@ -40,8 +40,11 @@ exports.getProducts = async (req, res, next) => {
 
 exports.postEditProduct = async (req, res, next) => {
     try {
-        const { productId, title, description, price, imageUrl } = req.body;
-        const product = new Product(title, price, description, imageUrl, productId);
+        const product = await Product.findById(req.body.productId);
+        product.title = req.body.title;
+        product.description = req.body.description;
+        product.price = req.body.price;
+        product.imageUrl = req.body.imageUrl;
         await product.save();
         res.redirect('/admin/products');
     } catch (err) {
