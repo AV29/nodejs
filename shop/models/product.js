@@ -23,7 +23,6 @@ const productSchema = new Schema({
 
 module.exports = mongoose.model('Product', productSchema);
 
-
 // const User = require('./user');
 //
 // class Product {
