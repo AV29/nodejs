@@ -6,7 +6,7 @@ const rootDir = require('./utils/path');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/error');
-//const User = require('./models/user');
+const User = require('./models/user');
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -31,6 +31,13 @@ mongoose
         { useNewUrlParser: true, useUnifiedTopology: true }
     )
     .then(() => {
+        const user = new User({
+            name: 'Anton',
+            email: 'snumber29@gmail.com',
+            cart: {
+                items: []
+            }
+        });
         app.listen(3000);
     })
     .catch(err => {
