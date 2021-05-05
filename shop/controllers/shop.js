@@ -41,11 +41,11 @@ exports.getProduct = async (req, res) => {
 
 exports.getCart = async (req, res) => {
     try {
-        const products = await req.user.getCart();
+        const user = await req.user.populate('cart.items.productId').execPopulate();
         res.render('shop/cart', {
             pageTitle: 'Your Cart',
             path: '/cart',
-            products: products
+            products: user.cart.items
         });
     } catch (err) {
         console.error(err);

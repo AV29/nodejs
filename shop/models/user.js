@@ -49,25 +49,6 @@ userSchema.methods.addToCart = async function (product) {
 };
 
 module.exports = mongoose.model('User', userSchema);
-
-
-//     async getCart() {
-//         try {
-//             const db = getDb();
-//             const cartProductIds = this.cart.items.map(item => item.productId);
-//             const products = await db
-//                 .collection('products')
-//                 .find({ _id: { $in: cartProductIds } })
-//                 .toArray();
-//             return products.map(prod => ({
-//                 ...prod,
-//                 quantity: this.cart.items.find(cartItem => cartItem.productId.toString() === prod._id.toString())
-//                     .quantity
-//             }));
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
 //
 //     async deleteItemFromCart(productId) {
 //         try {
