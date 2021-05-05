@@ -33,22 +33,6 @@ module.exports = mongoose.model('User', userSchema);
 // const mongoose = require('mongoose');
 //
 // class User {
-//     constructor(name, email, cart, id) {
-//         this.name = name;
-//         this.email = email;
-//         this.cart = cart;
-//         this._id = id;
-//     }
-//
-//     async save() {
-//         try {
-//             const db = getDb();
-//             return await db.collection('users').insertOne(this);
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
-//
 //     async addToCart(product) {
 //         try {
 //             const cartProductIndex = this.cart.items.findIndex(
@@ -140,18 +124,6 @@ module.exports = mongoose.model('User', userSchema);
 //                 .collection('orders')
 //                 .find({ 'user._id': new mongodb.ObjectId(this._id) })
 //                 .toArray();
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
-//
-//     static async findById(userId) {
-//         try {
-//             const db = getDb();
-//             return await db
-//                 .collection('users')
-//                 .find({ _id: new mongodb.ObjectId(userId) })
-//                 .next();
 //         } catch (err) {
 //             console.error(err);
 //         }

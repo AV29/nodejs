@@ -27,46 +27,7 @@ const productSchema = new Schema({
 
 module.exports = mongoose.model('Product', productSchema);
 
-// const User = require('./user');
-//
 // class Product {
-//     async save() {
-//         try {
-//             const db = getDb();
-//             return this._id
-//                 ? await db.collection('products').updateOne(
-//                       { _id: this._id },
-//                       {
-//                           $set: this
-//                       }
-//                   )
-//                 : await db.collection('products').insertOne(this);
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
-//
-//     static async fetchAll() {
-//         try {
-//             const db = getDb();
-//             return await db.collection('products').find().toArray();
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
-//
-//     static async findById(prodId) {
-//         try {
-//             const db = getDb();
-//             return await db
-//                 .collection('products')
-//                 .find({ _id: new mongodb.ObjectId(prodId) })
-//                 .next();
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
-//
 //     static async deleteById(prodId, user) {
 //         try {
 //             const db = getDb();
