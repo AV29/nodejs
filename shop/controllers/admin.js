@@ -33,9 +33,9 @@ exports.postAddProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
     try {
-        const products = await Product.find()
-            // .select('title price imageUrl')
-            // .populate('userId', 'name');
+        const products = await Product.find();
+        // .select('title price imageUrl')
+        // .populate('userId', 'name');
         res.render('admin/products', {
             pageTitle: 'Admin Products',
             products: products,

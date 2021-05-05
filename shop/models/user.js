@@ -28,37 +28,29 @@ const userSchema = new Schema({
     }
 });
 
+userSchema.methods.addToCart = async function (product) {
+    try {
+        const cartProductIndex = this.cart.items.findIndex(
+            ({ productId }) => productId.toString() === product._id.toString()
+        );
+
+        const updatedCartItems = [...this.cart.items];
+
+        if (cartProductIndex >= 0) {
+            updatedCartItems[cartProductIndex].quantity = this.cart.items[cartProductIndex].quantity + 1;
+        } else {
+            updatedCartItems.push({ productId: product._id, quantity: 1 });
+        }
+        this.cart = { items: updatedCartItems };
+        return await this.save();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 module.exports = mongoose.model('User', userSchema);
 
-// const mongoose = require('mongoose');
-//
-// class User {
-//     async addToCart(product) {
-//         try {
-//             const cartProductIndex = this.cart.items.findIndex(
-//                 ({ productId }) => productId.toString() === product._id.toString()
-//             );
-//
-//             const updatedCartItems = [...this.cart.items];
-//
-//             if (cartProductIndex >= 0) {
-//                 updatedCartItems[cartProductIndex].quantity = this.cart.items[cartProductIndex].quantity + 1;
-//             } else {
-//                 updatedCartItems.push({ productId: mongodb.ObjectId(product._id), quantity: 1 });
-//             }
-//             const updatedCart = { items: updatedCartItems };
-//             const db = getDb();
-//             return await db.collection('users').updateOne(
-//                 { _id: new mongodb.ObjectId(this._id) },
-//                 {
-//                     $set: { cart: updatedCart }
-//                 }
-//             );
-//         } catch (err) {
-//             console.log(err);
-//         }
-//     }
-//
+
 //     async getCart() {
 //         try {
 //             const db = getDb();
@@ -128,6 +120,3 @@ module.exports = mongoose.model('User', userSchema);
 //             console.error(err);
 //         }
 //     }
-// }
-//
-// module.exports = User;
