@@ -1,4 +1,5 @@
 import Product from '../models/product.js';
+import Order from '../models/order.js';
 
 export const getIndex = async (req, res) => {
     try {
@@ -74,7 +75,18 @@ export const postDeleteCartProduct = async (req, res, next) => {
 
 export const postOrder = async (req, res) => {
     try {
-        await req.user.addOrder();
+        const { cart } = await req.user.populate('cart.items.productId').execPopulate();
+        const order = new Order({
+            user: {
+                name: req.user.name,
+                userId: req.user
+            },
+            products: cart.items.map(item => ({
+                quantity: item.quantity,
+                product: item.productId.toJSON()
+            }))
+        });
+        await order.save();
         res.redirect('/orders');
     } catch (err) {
         console.error(err);
@@ -83,7 +95,8 @@ export const postOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
     try {
-        const orders = await req.user.getOrders();
+        const orders = await Order.find({ _id: req.user._id });
+        console.log(orders);
         res.render('shop/orders', {
             pageTitle: 'Orders',
             path: '/orders',

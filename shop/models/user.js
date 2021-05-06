@@ -76,7 +76,7 @@ export default mongoose.model('User', userSchema);
 //                 { _id: new mongodb.ObjectId(this._id) },
 //                 {
 //                     $set: { cart: this.cart }
-//                 }s
+//                 }
 //             );
 //         } catch (err) {
 //             console.error(err);
