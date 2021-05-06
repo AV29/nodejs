@@ -1,24 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import path from 'node:path';
-import bodyParser from 'body-parser';
 import { fileURLToPath } from 'node:url';
-import adminRoutes from './routes/admin.js';
+import bodyParser from 'body-parser';
 import shopRoutes from './routes/shop.js';
-import * as errorController from './controllers/error.js';
+import adminRoutes from './routes/admin.js';
+import getUser from './middlewares/getUser.js';
 import User from './models/user.js';
+import * as errorController from './controllers/error.js';
 
 const app = express();
 
 app.set('view engine', 'ejs');
-app.use(async (req, res, next) => {
-    try {
-        req.user = await User.findById('6091a498120a9fbb716ad2f4');
-        next();
-    } catch (err) {
-        console.error(err);
-    }
-});
+app.use(getUser);
 app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/admin', adminRoutes);
