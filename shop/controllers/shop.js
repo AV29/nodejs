@@ -87,6 +87,7 @@ export const postOrder = async (req, res) => {
             }))
         });
         await order.save();
+        await req.user.clearCart();
         res.redirect('/orders');
     } catch (err) {
         console.error(err);

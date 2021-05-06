@@ -57,31 +57,16 @@ userSchema.methods.removeFromCart = async function (productId) {
     }
 };
 
+userSchema.methods.clearCart = async function () {
+    try {
+        this.cart = { items: [] };
+        return await this.save();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 export default mongoose.model('User', userSchema);
-//     async addOrder() {
-//         try {
-//             const db = getDb();
-//             const products = await this.getCart();
-//             const order = {
-//                 items: products,
-//                 user: {
-//                     _id: new mongodb.ObjectId(this._id),
-//                     name: this.name,
-//                     email: this.email
-//                 }
-//             };
-//             await db.collection('orders').insertOne(order);
-//             this.cart = { items: [] };
-//             return await db.collection('users').updateOne(
-//                 { _id: new mongodb.ObjectId(this._id) },
-//                 {
-//                     $set: { cart: this.cart }
-//                 }
-//             );
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
 //
 //     async getOrders() {
 //         try {
