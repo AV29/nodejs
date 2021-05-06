@@ -48,6 +48,15 @@ userSchema.methods.addToCart = async function (product) {
     }
 };
 
+userSchema.methods.removeFromCart = async function (productId) {
+    try {
+        this.cart.items = this.cart.items.filter(item => item.productId.toString() !== productId.toString())
+        return await this.save();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 export default mongoose.model('User', userSchema);
 //
 //     async deleteItemFromCart(productId) {

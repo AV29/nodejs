@@ -65,7 +65,7 @@ export const postCart = async (req, res) => {
 
 export const postDeleteCartProduct = async (req, res, next) => {
     try {
-        await req.user.deleteItemFromCart(req.body.productId);
+        await req.user.removeFromCart(req.body.productId);
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
