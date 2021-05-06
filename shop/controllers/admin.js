@@ -83,7 +83,7 @@ export const getEditProduct = async (req, res, next) => {
 
 export const postDeleteProduct = async (req, res, next) => {
     try {
-        await Product.deleteById(req.body.productId, req.user);
+        await Product.deleteOne({ _id: req.body.productId });
         res.redirect('/admin/products');
     } catch (err) {
         console.error(err);

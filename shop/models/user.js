@@ -58,22 +58,6 @@ userSchema.methods.removeFromCart = async function (productId) {
 };
 
 export default mongoose.model('User', userSchema);
-//
-//     async deleteItemFromCart(productId) {
-//         try {
-//             const updatedCartItems = this.cart.items.filter(item => item.productId.toString() !== productId.toString());
-//             const db = getDb();
-//             return await db.collection('users').updateOne(
-//                 { _id: new mongodb.ObjectId(this._id) },
-//                 {
-//                     $set: { cart: { items: updatedCartItems } }
-//                 }
-//             );
-//         } catch (err) {
-//             console.log(err);
-//         }
-//     }
-//
 //     async addOrder() {
 //         try {
 //             const db = getDb();
@@ -92,7 +76,7 @@ export default mongoose.model('User', userSchema);
 //                 { _id: new mongodb.ObjectId(this._id) },
 //                 {
 //                     $set: { cart: this.cart }
-//                 }
+//                 }s
 //             );
 //         } catch (err) {
 //             console.error(err);
