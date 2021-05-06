@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
+import * as shopController from '../controllers/shop.js';
 const router = express.Router();
-const shopController = require('../controllers/shop');
 
 router.get('/', shopController.getIndex);
 //
@@ -18,4 +18,4 @@ router.post('/cart', shopController.postCart);
 // //
 // router.get('/orders', shopController.getOrders);
 
-module.exports = router;
+export default router;

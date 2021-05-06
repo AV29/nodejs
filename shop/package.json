@@ -2,7 +2,9 @@
     "name": "nodejs-things",
     "version": "1.0.0",
     "description": "Practising in Node JS",
-    "main": "app.js",
+    "type": "module",
+    "exports": "./app.js",
+    "node": ">=12.17",
     "scripts": {
         "prestart": "prettier --write .",
         "start": "nodemon -r dotenv/config app.js",

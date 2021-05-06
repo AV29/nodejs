@@ -1,6 +1,6 @@
-const Product = require('../models/product');
+import Product from '../models/product.js';
 
-exports.getAddProduct = (req, res, next) => {
+export const getAddProduct = async (req, res, next) => {
     res.render('admin/edit-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
@@ -14,7 +14,7 @@ exports.getAddProduct = (req, res, next) => {
     });
 };
 
-exports.postAddProduct = async (req, res, next) => {
+export const postAddProduct = async (req, res, next) => {
     const { title, description, imageUrl, price } = req.body;
     try {
         const product = new Product({
@@ -31,7 +31,7 @@ exports.postAddProduct = async (req, res, next) => {
     }
 };
 
-exports.getProducts = async (req, res, next) => {
+export const getProducts = async (req, res, next) => {
     try {
         const products = await Product.find();
         // .select('title price imageUrl')
@@ -46,7 +46,7 @@ exports.getProducts = async (req, res, next) => {
     }
 };
 
-exports.postEditProduct = async (req, res, next) => {
+export const postEditProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.body.productId);
         product.title = req.body.title;
@@ -60,7 +60,7 @@ exports.postEditProduct = async (req, res, next) => {
     }
 };
 
-exports.getEditProduct = async (req, res, next) => {
+export const getEditProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.productId);
         if (!product) {
@@ -81,7 +81,7 @@ exports.getEditProduct = async (req, res, next) => {
     }
 };
 
-exports.postDeleteProduct = async (req, res, next) => {
+export const postDeleteProduct = async (req, res, next) => {
     try {
         await Product.deleteById(req.body.productId, req.user);
         res.redirect('/admin/products');

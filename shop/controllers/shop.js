@@ -1,6 +1,6 @@
-const Product = require('../models/product');
+import Product from '../models/product.js';
 
-exports.getIndex = async (req, res) => {
+export const getIndex = async (req, res) => {
     try {
         const products = await Product.find();
         res.render('shop/index', {
@@ -13,7 +13,7 @@ exports.getIndex = async (req, res) => {
     }
 };
 
-exports.getProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
     try {
         const products = await Product.find();
         res.render('shop/product-list', {
@@ -26,7 +26,7 @@ exports.getProducts = async (req, res) => {
     }
 };
 
-exports.getProduct = async (req, res) => {
+export const getProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.productId);
         res.render('shop/product-detail', {
@@ -39,7 +39,7 @@ exports.getProduct = async (req, res) => {
     }
 };
 
-exports.getCart = async (req, res) => {
+export const getCart = async (req, res) => {
     try {
         const user = await req.user.populate('cart.items.productId').execPopulate();
         res.render('shop/cart', {
@@ -52,7 +52,7 @@ exports.getCart = async (req, res) => {
     }
 };
 
-exports.postCart = async (req, res) => {
+export const postCart = async (req, res) => {
     try {
         const productId = req.body.productId;
         const product = await Product.findById(productId);
@@ -63,7 +63,7 @@ exports.postCart = async (req, res) => {
     }
 };
 
-exports.postDeleteCartProduct = async (req, res, next) => {
+export const postDeleteCartProduct = async (req, res, next) => {
     try {
         await req.user.deleteItemFromCart(req.body.productId);
         res.redirect('/cart');
@@ -72,7 +72,7 @@ exports.postDeleteCartProduct = async (req, res, next) => {
     }
 };
 
-exports.postOrder = async (req, res) => {
+export const postOrder = async (req, res) => {
     try {
         await req.user.addOrder();
         res.redirect('/orders');
@@ -81,7 +81,7 @@ exports.postOrder = async (req, res) => {
     }
 };
 
-exports.getOrders = async (req, res) => {
+export const getOrders = async (req, res) => {
     try {
         const orders = await req.user.getOrders();
         res.render('shop/orders', {

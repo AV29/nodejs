@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -48,7 +48,7 @@ userSchema.methods.addToCart = async function (product) {
     }
 };
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);
 //
 //     async deleteItemFromCart(productId) {
 //         try {
