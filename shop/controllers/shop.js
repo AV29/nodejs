@@ -96,8 +96,7 @@ export const postOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find({ _id: req.user._id });
-        console.log(orders);
+        const orders = await Order.find({ 'user.userId': req.user._id });
         res.render('shop/orders', {
             pageTitle: 'Orders',
             path: '/orders',

@@ -67,15 +67,3 @@ userSchema.methods.clearCart = async function () {
 };
 
 export default mongoose.model('User', userSchema);
-//
-//     async getOrders() {
-//         try {
-//             const db = getDb();
-//             return await db
-//                 .collection('orders')
-//                 .find({ 'user._id': new mongodb.ObjectId(this._id) })
-//                 .toArray();
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     }
