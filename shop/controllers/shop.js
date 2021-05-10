@@ -7,6 +7,7 @@ export const getIndex = async (req, res) => {
         res.render('shop/index', {
             pageTitle: 'Shop',
             products: products,
+            isAuthenticated: req.isAuthenticated,
             path: '/'
         });
     } catch (err) {
@@ -20,6 +21,7 @@ export const getProducts = async (req, res) => {
         res.render('shop/product-list', {
             pageTitle: 'All Products',
             products: products,
+            isAuthenticated: req.isAuthenticated,
             path: '/products'
         });
     } catch (err) {
@@ -33,6 +35,7 @@ export const getProduct = async (req, res) => {
         res.render('shop/product-detail', {
             pageTitle: product.title,
             product: product,
+            isAuthenticated: req.isAuthenticated,
             path: '/products'
         });
     } catch (err) {
@@ -46,6 +49,7 @@ export const getCart = async (req, res) => {
         res.render('shop/cart', {
             pageTitle: 'Your Cart',
             path: '/cart',
+            isAuthenticated: req.isAuthenticated,
             products: user.cart.items
         });
     } catch (err) {
@@ -100,6 +104,7 @@ export const getOrders = async (req, res) => {
         res.render('shop/orders', {
             pageTitle: 'Orders',
             path: '/orders',
+            isAuthenticated: req.isAuthenticated,
             orders: orders
         });
     } catch (err) {
