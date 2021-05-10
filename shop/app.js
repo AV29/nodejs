@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import bodyParser from 'body-parser';
 import shopRoutes from './routes/shop.js';
 import adminRoutes from './routes/admin.js';
+import authRoutes from './routes/auth.js';
 import getUser from './middlewares/getUser.js';
 import User from './models/user.js';
 import * as errorController from './controllers/error.js';
@@ -17,6 +18,7 @@ app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 app.use(errorController.get404);
 
 try {
