@@ -7,7 +7,8 @@ import shopRoutes from './routes/shop.js';
 import adminRoutes from './routes/admin.js';
 import authRoutes from './routes/auth.js';
 import User from './models/user.js';
-import getSession from './utils/session.js';
+import getSession from './middlewares/getSession.js';
+import getUser from './middlewares/getUser.js';
 import { MONGODB_URI } from './utils/constants.js';
 import * as errorController from './controllers/error.js';
 
@@ -15,6 +16,7 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.use(getSession);
+app.use(getUser);
 app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/admin', adminRoutes);

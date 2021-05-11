@@ -1,4 +1,12 @@
 import session from 'express-session';
+import InitializeMongoDBStore from 'connect-mongodb-session';
+import { MONGODB_URI } from '../utils/constants.js';
+
+const MongoDBStore = InitializeMongoDBStore(session);
+const sessionStore = new MongoDBStore({
+    uri: MONGODB_URI,
+    collection: 'sessions'
+});
 
 export default session({
     secret: process.env.SESSION_SECRET,
@@ -7,5 +15,6 @@ export default session({
     cookie: {
         maxAge: null,
         httpOnly: true
-    }
+    },
+    store: sessionStore
 });

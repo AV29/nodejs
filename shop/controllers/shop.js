@@ -45,7 +45,7 @@ export const getProduct = async (req, res) => {
 
 export const getCart = async (req, res) => {
     try {
-        const user = await req.session.user.populate('cart.items.productId').execPopulate();
+        const user = await req.user.populate('cart.items.productId').execPopulate();
         res.render('shop/cart', {
             pageTitle: 'Your Cart',
             path: '/cart',
@@ -61,7 +61,7 @@ export const postCart = async (req, res) => {
     try {
         const productId = req.body.productId;
         const product = await Product.findById(productId);
-        await req.session.user.addToCart(product);
+        await req.user.addToCart(product);
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
@@ -70,7 +70,7 @@ export const postCart = async (req, res) => {
 
 export const postDeleteCartProduct = async (req, res, next) => {
     try {
-        await req.session.user.removeFromCart(req.body.productId);
+        await req.user.removeFromCart(req.body.productId);
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
@@ -79,7 +79,7 @@ export const postDeleteCartProduct = async (req, res, next) => {
 
 export const postOrder = async (req, res) => {
     try {
-        const { cart } = await req.session.user.populate('cart.items.productId').execPopulate();
+        const { cart } = await req.user.populate('cart.items.productId').execPopulate();
         const order = new Order({
             user: {
                 name: req.session.user.name,
@@ -91,7 +91,7 @@ export const postOrder = async (req, res) => {
             }))
         });
         await order.save();
-        await req.session.user.clearCart();
+        await req.user.clearCart();
         res.redirect('/orders');
     } catch (err) {
         console.error(err);

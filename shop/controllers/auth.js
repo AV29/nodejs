@@ -12,9 +12,10 @@ export const postLogin = async (req, res, next) => {
     try {
         req.session.user = await User.findById('6093eee54fa0ebc60a8f09d2');
         req.session.isAuthenticated = true;
-        res.redirect('/admin/products');
+        await req.session.save();
+        res.redirect('/');
     } catch (err) {
-        console.error(err); 
+        console.error(err);
     }
 };
 
