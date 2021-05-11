@@ -14,6 +14,15 @@ export const postLogin = async (req, res, next) => {
         req.session.isAuthenticated = true;
         res.redirect('/admin/products');
     } catch (err) {
+        console.error(err); 
+    }
+};
+
+export const postLogout = async (req, res, next) => {
+    try {
+        await req.session.destroy();
+        res.redirect('/');
+    } catch (err) {
         console.error(err);
     }
 };
