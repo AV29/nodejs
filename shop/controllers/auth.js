@@ -1,3 +1,5 @@
+import User from '../models/user.js';
+
 export const getLogin = async (req, res, next) => {
     res.render('auth/login', {
         pageTitle: 'Login',
@@ -7,6 +9,11 @@ export const getLogin = async (req, res, next) => {
 };
 
 export const postLogin = async (req, res, next) => {
-    req.session.isAuthenticated = true;
-    res.redirect('/admin/products');
+    try {
+        req.session.user = await User.findById('6093eee54fa0ebc60a8f09d2');
+        req.session.isAuthenticated = true;
+        res.redirect('/admin/products');
+    } catch (err) {
+        console.error(err);
+    }
 };

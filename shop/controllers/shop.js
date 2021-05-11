@@ -45,7 +45,7 @@ export const getProduct = async (req, res) => {
 
 export const getCart = async (req, res) => {
     try {
-        const user = await req.user.populate('cart.items.productId').execPopulate();
+        const user = await req.session.user.populate('cart.items.productId').execPopulate();
         res.render('shop/cart', {
             pageTitle: 'Your Cart',
             path: '/cart',
@@ -61,7 +61,7 @@ export const postCart = async (req, res) => {
     try {
         const productId = req.body.productId;
         const product = await Product.findById(productId);
-        await req.user.addToCart(product);
+        await req.session.user.addToCart(product);
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
@@ -70,7 +70,7 @@ export const postCart = async (req, res) => {
 
 export const postDeleteCartProduct = async (req, res, next) => {
     try {
-        await req.user.removeFromCart(req.body.productId);
+        await req.session.user.removeFromCart(req.body.productId);
         res.redirect('/cart');
     } catch (err) {
         console.error(err);
@@ -79,11 +79,11 @@ export const postDeleteCartProduct = async (req, res, next) => {
 
 export const postOrder = async (req, res) => {
     try {
-        const { cart } = await req.user.populate('cart.items.productId').execPopulate();
+        const { cart } = await req.session.user.populate('cart.items.productId').execPopulate();
         const order = new Order({
             user: {
-                name: req.user.name,
-                userId: req.user
+                name: req.session.user.name,
+                userId: req.session.user
             },
             products: cart.items.map(item => ({
                 quantity: item.quantity,
@@ -91,7 +91,7 @@ export const postOrder = async (req, res) => {
             }))
         });
         await order.save();
-        await req.user.clearCart();
+        await req.session.user.clearCart();
         res.redirect('/orders');
     } catch (err) {
         console.error(err);
@@ -100,7 +100,7 @@ export const postOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find({ 'user.userId': req.user._id });
+        const orders = await Order.find({ 'user.userId': req.session.user._id });
         res.render('shop/orders', {
             pageTitle: 'Orders',
             path: '/orders',

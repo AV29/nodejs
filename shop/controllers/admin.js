@@ -23,7 +23,7 @@ export const postAddProduct = async (req, res, next) => {
             description: description,
             imageUrl: imageUrl,
             price: price,
-            userId: req.user
+            userId: req.session.user
         });
         await product.save();
         res.redirect('/admin/products');
@@ -88,7 +88,7 @@ export const getEditProduct = async (req, res, next) => {
 export const postDeleteProduct = async (req, res, next) => {
     try {
         await Product.deleteOne({ _id: req.body.productId });
-        await req.user.removeFromCart(req.body.productId);
+        await req.session.user.removeFromCart(req.body.productId);
         res.redirect('/admin/products');
     } catch (err) {
         console.error(err);
