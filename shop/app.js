@@ -8,7 +8,7 @@ import adminRoutes from './routes/admin.js';
 import authRoutes from './routes/auth.js';
 import getSession from './middlewares/getSession.js';
 import getUser from './middlewares/getUser.js';
-import { MONGODB_URI } from './utils/constants.js';
+import MONGODB_URI from './utils/constants.js';
 import * as errorController from './controllers/error.js';
 
 const app = express();
@@ -24,7 +24,11 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 try {
-    await mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+    await mongoose.connect(MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true
+    });
     app.listen(3000);
 } catch (err) {
     console.log(err);
