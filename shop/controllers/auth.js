@@ -15,9 +15,7 @@ export const postLogin = async (req, res, next) => {
         const password = req.body.password;
 
         const user = await User.findOne({ email: email });
-        if (!user) {
-            res.redirect('/login');
-        } else {
+        if (user) {
             const isPasswordCorrect = await bcrypt.compare(password, user.password);
             if (isPasswordCorrect) {
                 req.session.user = user;
@@ -27,6 +25,8 @@ export const postLogin = async (req, res, next) => {
             } else {
                 res.redirect('/login');
             }
+        } else {
+            res.redirect('/login');
         }
     } catch (err) {
         res.redirect('/login');
