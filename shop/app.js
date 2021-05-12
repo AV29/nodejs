@@ -18,9 +18,9 @@ app.use(getSession);
 app.use(getUser);
 app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.use('/admin', adminRoutes);
 app.use(errorController.get404);
 
 try {

@@ -1,17 +1,19 @@
 import express from 'express';
 import * as adminController from '../controllers/admin.js';
+import checkAuth from '../middlewares/checkAuth.js';
+
 const router = express.Router();
 
-router.get('/add-product', adminController.getAddProduct);
+router.get('/add-product', checkAuth, adminController.getAddProduct);
 
-router.get('/products', adminController.getProducts);
+router.get('/products', checkAuth, adminController.getProducts);
 
-router.post('/add-product', adminController.postAddProduct);
+router.post('/add-product', checkAuth, adminController.postAddProduct);
 
-router.get('/edit-product/:productId', adminController.getEditProduct);
+router.get('/edit-product/:productId', checkAuth, adminController.getEditProduct);
 
-router.post('/edit-product', adminController.postEditProduct);
+router.post('/edit-product', checkAuth, adminController.postEditProduct);
 
-router.post('/delete-product', adminController.postDeleteProduct);
+router.post('/delete-product', checkAuth, adminController.postDeleteProduct);
 
 export default router;
