@@ -1,8 +1,9 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import csrf from 'csurf';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import bodyParser from 'body-parser';
 import shopRoutes from './routes/shop.js';
 import adminRoutes from './routes/admin.js';
 import authRoutes from './routes/auth.js';
@@ -12,9 +13,11 @@ import MONGODB_URI from './utils/constants.js';
 import * as errorController from './controllers/error.js';
 
 const app = express();
-
+const protectCSRF = csrf();
+ 
 app.set('view engine', 'ejs');
 app.use(getSession);
+app.use(protectCSRF);
 app.use(getUser);
 app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));

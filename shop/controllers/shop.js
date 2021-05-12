@@ -8,6 +8,7 @@ export const getIndex = async (req, res) => {
             pageTitle: 'Shop',
             products: products,
             isAuthenticated: req.session.isAuthenticated,
+            csrfToken: req.csrfToken(),
             path: '/'
         });
     } catch (err) {
