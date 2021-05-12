@@ -11,11 +11,25 @@ export const getLogin = async (req, res, next) => {
 
 export const postLogin = async (req, res, next) => {
     try {
-        req.session.user = await User.findById('6093eee54fa0ebc60a8f09d2');
-        req.session.isAuthenticated = true;
-        await req.session.save();
-        res.redirect('/');
+        const email = req.body.email;
+        const password = req.body.password;
+
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            res.redirect('/login');
+        } else {
+            const isPasswordCorrect = await bcrypt.compare(password, user.password);
+            if (isPasswordCorrect) {
+                req.session.user = user;
+                req.session.isAuthenticated = true;
+                await req.session.save();
+                res.redirect('/');
+            } else {
+                res.redirect('/login');
+            }
+        }
     } catch (err) {
+        res.redirect('/login');
         console.error(err);
     }
 };
