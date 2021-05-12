@@ -3,7 +3,7 @@ import User from '../models/user.js';
 export const getLogin = async (req, res, next) => {
     res.render('auth/login', {
         pageTitle: 'Login',
-        isAuthenticated: req.session.isAuthenticated,
+        isAuthenticated: false,
         path: '/login'
     });
 };
@@ -17,6 +17,16 @@ export const postLogin = async (req, res, next) => {
     } catch (err) {
         console.error(err);
     }
+};
+
+export const postSignup = async (req, res, next) => {};
+
+export const getSignup = async (req, res, next) => {
+    res.render('auth/signup', {
+        pageTitle: 'Signup',
+        isAuthenticated: false,
+        path: '/signup'
+    });
 };
 
 export const postLogout = async (req, res, next) => {
