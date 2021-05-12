@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-//import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 const Schema = mongoose.Schema;
 
@@ -30,40 +30,34 @@ const userSchema = new Schema({
     }
 });
 
-/*userSchema
-    .virtual('password')
-    .set(function (password) {
-        this._plainPassword = password;
-        this.salt = Math.random().toString();
-        this.hashedPassword = this.encryptPassword(password);
-    })
-    .get(function () {
-        return this._plainPassword;
-    });
-
-userSchema.methods.encryptPassword = function (password) {
-    return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
-};
-
-userSchema.methods.checkPassword = function (password) {
-    return this.encryptPassword(password) === this.hashedPassword;
-};
-
-userSchema.statics.authorize = async function ({ email, password }, onUserExists, onUserCreated) {
-    const User = this;
-    const existingUser = await User.findOne({ email: email });
-    if (existingUser) {
-        onUserExists();
+userSchema.statics.login = async function (email, password) {
+    const user = await this.findOne({ email: email });
+    if (user) {
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (isPasswordCorrect) {
+            return user;
+        } else {
+            throw 'Password is incorrect!';
+        }
     } else {
-        const user = new User({
+        throw 'No such user!';
+    }
+};
+
+userSchema.statics.signup = async function (email, password, confirmPassword) {
+    const existingUser = await this.findOne({ email: email });
+    if (!existingUser) {
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const user = new this({
             email: email,
-            password: password,
+            password: hashedPassword,
             cart: { items: [] }
         });
-        await user.save();
-        onUserCreated();
+        return await user.save();
+    } else {
+        throw 'Already existing user!';
     }
-};*/
+};
 
 userSchema.methods.addToCart = async function (product) {
     try {
