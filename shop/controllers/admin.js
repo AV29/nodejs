@@ -5,7 +5,6 @@ export const getAddProduct = async (req, res, next) => {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
         isEditing: false,
-        isAuthenticated: req.session.isAuthenticated,
         product: {
             title: '',
             price: 0,
@@ -40,7 +39,6 @@ export const getProducts = async (req, res, next) => {
         res.render('admin/products', {
             pageTitle: 'Admin Products',
             products: products,
-            isAuthenticated: req.session.isAuthenticated,
             path: '/admin/products'
         });
     } catch (err) {
@@ -69,7 +67,6 @@ export const getEditProduct = async (req, res, next) => {
             return res.status(404).render('404', {
                 pageTitle: 'Page Not Found',
                 path: '/',
-                isAuthenticated: req.session.isAuthenticated,
                 errorMessage: `There is no product with ID: ${req.params.productId}!`
             });
         }
@@ -77,7 +74,6 @@ export const getEditProduct = async (req, res, next) => {
             pageTitle: 'Edit Product',
             path: '/admin/edit-product',
             isEditing: true,
-            isAuthenticated: req.session.isAuthenticated,
             product: product
         });
     } catch (err) {
