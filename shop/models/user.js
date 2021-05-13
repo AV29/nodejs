@@ -57,7 +57,7 @@ userSchema.statics.signup = async function (email, password, confirmPassword) {
             });
             return await user.save();
         } else {
-            throw 'Passwords doesn\'t match!';
+            throw "Passwords doesn't match!";
         }
     } else {
         throw 'This email is already taken!';

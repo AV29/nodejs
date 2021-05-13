@@ -1,3 +1,4 @@
+import sendMail from '../utils/sendMail.js';
 import User from '../models/user.js';
 
 export const getLogin = async (req, res, next) => {
@@ -34,6 +35,11 @@ export const postSignup = async (req, res, next) => {
     try {
         await User.signup(req.body.email, req.body.password, req.body.confirmPassword);
         res.redirect('/login');
+        sendMail({
+            to: req.body.email,
+            subject: 'Registration',
+            html: '<h1>You have successfully registered!</h1>'
+        }).catch(err => console.log('HEY!!!', err));
     } catch (err) {
         req.flash('error', err);
         res.redirect('/signup');
