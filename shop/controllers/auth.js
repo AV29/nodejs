@@ -5,7 +5,7 @@ export const getLogin = async (req, res, next) => {
         pageTitle: 'Login',
         isAuthenticated: false,
         path: '/login',
-        errorMessage: req.flash('error')
+        errorMessage: req.flash('error')[0]
     });
 };
 
@@ -18,17 +18,6 @@ export const postLogin = async (req, res, next) => {
     } catch (err) {
         req.flash('error', err);
         res.redirect('/login');
-        console.error(err);
-    }
-};
-
-export const postSignup = async (req, res, next) => {
-    try {
-        await User.signup(req.body.email, req.body.password, req.body.confirmPassword);
-        res.redirect('/login');
-    } catch (err) {
-        res.redirect('/signup');
-        console.error(err);
     }
 };
 
@@ -36,8 +25,19 @@ export const getSignup = async (req, res, next) => {
     res.render('auth/signup', {
         pageTitle: 'Signup',
         isAuthenticated: false,
-        path: '/signup'
+        path: '/signup',
+        errorMessage: req.flash('error')[0]
     });
+};
+
+export const postSignup = async (req, res, next) => {
+    try {
+        await User.signup(req.body.email, req.body.password, req.body.confirmPassword);
+        res.redirect('/login');
+    } catch (err) {
+        req.flash('error', err);
+        res.redirect('/signup');
+    }
 };
 
 export const postLogout = async (req, res, next) => {

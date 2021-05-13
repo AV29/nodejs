@@ -46,16 +46,21 @@ userSchema.statics.login = async function (email, password) {
 
 userSchema.statics.signup = async function (email, password, confirmPassword) {
     const existingUser = await this.findOne({ email: email });
+    const User = this;
     if (!existingUser) {
-        const hashedPassword = await bcrypt.hash(password, 12);
-        const user = new this({
-            email: email,
-            password: hashedPassword,
-            cart: { items: [] }
-        });
-        return await user.save();
+        if (confirmPassword === password) {
+            const hashedPassword = await bcrypt.hash(password, 12);
+            const user = new User({
+                email: email,
+                password: hashedPassword,
+                cart: { items: [] }
+            });
+            return await user.save();
+        } else {
+            throw 'Passwords doesn\'t match!';
+        }
     } else {
-        throw 'Already existing user!';
+        throw 'This email is already taken!';
     }
 };
 
