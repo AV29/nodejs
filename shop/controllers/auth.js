@@ -1,4 +1,5 @@
 import sendMail from '../utils/sendMail.js';
+import { SignupError, LoginError } from '../utils/errors.js';
 import User from '../models/user.js';
 
 export const getLogin = async (req, res, next) => {
@@ -17,8 +18,12 @@ export const postLogin = async (req, res, next) => {
         await req.session.save();
         res.redirect('/');
     } catch (err) {
-        req.flash('error', err);
-        res.redirect('/login');
+        if (err instanceof LoginError) {
+            req.flash('error', err.message);
+            res.redirect('/login');
+        } else {
+            console.error(err);
+        }
     }
 };
 
@@ -35,14 +40,19 @@ export const postSignup = async (req, res, next) => {
     try {
         await User.signup(req.body.email, req.body.password, req.body.confirmPassword);
         res.redirect('/login');
-        sendMail({
+        return await sendMail({
             to: req.body.email,
             subject: 'Registration',
             html: '<h1>You have successfully registered!</h1>'
-        }).catch(err => console.log('HEY!!!', err));
+        });
     } catch (err) {
-        req.flash('error', err);
-        res.redirect('/signup');
+        if (err instanceof SignupError) {
+            console.log(err);
+            req.flash('error', err.message);
+            res.redirect('/signup');
+        } else {
+            console.error(err);
+        }
     }
 };
 

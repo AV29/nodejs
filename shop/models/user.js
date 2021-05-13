@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { SignupError, LoginError } from '../utils/errors.js';
 
 const Schema = mongoose.Schema;
 
@@ -37,10 +38,10 @@ userSchema.statics.login = async function (email, password) {
         if (isPasswordCorrect) {
             return user;
         } else {
-            throw 'Password is incorrect!';
+            throw new LoginError('Password is incorrect!');
         }
     } else {
-        throw 'No such user!';
+        throw new LoginError('No such user!');
     }
 };
 
@@ -57,10 +58,10 @@ userSchema.statics.signup = async function (email, password, confirmPassword) {
             });
             return await user.save();
         } else {
-            throw "Passwords doesn't match!";
+            throw new SignupError('Entered passwords do not match!');
         }
     } else {
-        throw 'This email is already taken!';
+        throw new SignupError('This email is already taken!');
     }
 };
 
