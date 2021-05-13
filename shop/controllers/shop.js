@@ -78,8 +78,8 @@ export const postOrder = async (req, res) => {
         const { cart } = await req.user.populate('cart.items.productId').execPopulate();
         const order = new Order({
             user: {
-                name: req.session.user.name,
-                userId: req.session.user
+                email: req.user.email,
+                userId: req.user
             },
             products: cart.items.map(item => ({
                 quantity: item.quantity,

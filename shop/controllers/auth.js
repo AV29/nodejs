@@ -4,7 +4,8 @@ export const getLogin = async (req, res, next) => {
     res.render('auth/login', {
         pageTitle: 'Login',
         isAuthenticated: false,
-        path: '/login'
+        path: '/login',
+        errorMessage: req.flash('error')
     });
 };
 
@@ -15,6 +16,7 @@ export const postLogin = async (req, res, next) => {
         await req.session.save();
         res.redirect('/');
     } catch (err) {
+        req.flash('error', err);
         res.redirect('/login');
         console.error(err);
     }
