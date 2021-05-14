@@ -33,7 +33,7 @@ export const postAddProduct = async (req, res, next) => {
 
 export const getProducts = async (req, res, next) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find({ userId: req.user._id });
         // .select('title price imageUrl')
         // .populate('userId', 'name');
         res.render('admin/products', {
@@ -49,12 +49,16 @@ export const getProducts = async (req, res, next) => {
 export const postEditProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.body.productId);
-        product.title = req.body.title;
-        product.description = req.body.description;
-        product.price = req.body.price;
-        product.imageUrl = req.body.imageUrl;
-        await product.save();
-        res.redirect('/admin/products');
+        if (product.userId.toString() !== req.user._id.toString()) {
+            res.redirect('/');
+        } else {
+            product.title = req.body.title;
+            product.description = req.body.description;
+            product.price = req.body.price;
+            product.imageUrl = req.body.imageUrl;
+            await product.save();
+            res.redirect('/admin/products');
+        }
     } catch (err) {
         console.error(err);
     }
@@ -83,7 +87,7 @@ export const getEditProduct = async (req, res, next) => {
 
 export const postDeleteProduct = async (req, res, next) => {
     try {
-        await Product.deleteOne({ _id: req.body.productId });
+        await Product.deleteOne({ _id: req.body.productId, userId: req.user._id });
         await req.user.removeFromCart(req.body.productId);
         res.redirect('/admin/products');
     } catch (err) {
