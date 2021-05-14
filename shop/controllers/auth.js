@@ -1,5 +1,4 @@
 import sendMail from '../utils/sendMail.js';
-import bcrypt from 'bcryptjs';
 import { SignupError, LoginError, ResetPasswordError } from '../utils/errors.js';
 import User from '../models/user.js';
 
@@ -97,22 +96,21 @@ export const postReset = async (req, res, next) => {
 
 export const getNewPassword = async (req, res, next) => {
     try {
-        const token = req.params.token;
-        const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
-        if (user) {
-            res.render('auth/new-password', {
-                pageTitle: 'New Password',
-                path: '/new-password',
-                userId: user._id.toString(),
-                passwordToken: token,
-                errorMessage: req.flash('error')[0]
-            });
-        } else {
-            req.flash('error', 'Invalid data provided');
-            res.redirect('/login');
-        }
+        const user = await User.findUserByResetToken(req.params.token);
+        res.render('auth/new-password', {
+            pageTitle: 'New Password',
+            path: '/new-password',
+            userId: user._id.toString(),
+            passwordToken: req.params.token,
+            errorMessage: req.flash('error')[0]
+        });
     } catch (err) {
-        console.error(err);
+        if (err instanceof ResetPasswordError) {
+            req.flash('error', err.message);
+            res.redirect('/login');
+        } else {
+            console.error(err);
+        }
     }
 };
 

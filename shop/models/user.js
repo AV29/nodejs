@@ -69,22 +69,36 @@ userSchema.statics.signup = async function (email, password, confirmPassword) {
 };
 
 userSchema.statics.setResetPasswordToken = async function (email) {
-        const User = this;
-        const token = await crypto.randomBytes(32).toString('hex');
-        const user = await User.findOne({ email: email });
-        if (user) {
-            user.resetToken = token;
-            user.resetTokenExpiration = Date.now() + 60 * 60 * 1000;
-            return await user.save();
-        } else {
-            throw new ResetPasswordError('No account with that email found!');
-        }
+    const User = this;
+    const token = await crypto.randomBytes(32).toString('hex');
+    const user = await User.findOne({ email: email });
+    if (user) {
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 60 * 60 * 1000;
+        return await user.save();
+    } else {
+        throw new ResetPasswordError('No account with that email found!');
+    }
+};
+
+userSchema.statics.findUserByResetToken = async function (resetToken) {
+    const User = this;
+    const user = await User.findOne({ resetToken: resetToken, resetTokenExpiration: { $gt: Date.now() } });
+    if (user) {
+        return user;
+    } else {
+        throw new ResetPasswordError('Either password has already been reset or you have invalid data!');
+    }
 };
 
 userSchema.statics.resetPassword = async function (newPassword, userId, passwordToken) {
     const User = this;
-    const user = await User.findOne({ _id: userId, resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() } });
-    if(user) {
+    const user = await User.findOne({
+        _id: userId,
+        resetToken: passwordToken,
+        resetTokenExpiration: { $gt: Date.now() }
+    });
+    if (user) {
         user.password = await bcrypt.hash(newPassword, 12);
         user.resetToken = null;
         user.resetTokenExpiration = null;
