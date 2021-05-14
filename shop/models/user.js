@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { SignupError, LoginError } from '../utils/errors.js';
+import crypto from 'node:crypto';
+import { SignupError, LoginError, ResetPasswordError } from '../utils/errors.js';
 
 const Schema = mongoose.Schema;
 
@@ -14,6 +15,8 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    resetToken: String,
+    resetTokenExpiration: Date,
     cart: {
         items: [
             {
@@ -58,11 +61,24 @@ userSchema.statics.signup = async function (email, password, confirmPassword) {
             });
             return await user.save();
         } else {
-            throw new SignupError('Entered passwords do not match!');
+            throw new ResetPasswordError('Entered passwords do not match!');
         }
     } else {
         throw new SignupError('This email is already taken!');
     }
+};
+
+userSchema.statics.resetPassword = async function (email) {
+        const User = this;
+        const token = await crypto.randomBytes(32).toString('hex');
+        const user = await User.findOne({ email: email });
+        if (user) {
+            user.resetToken = token;
+            user.resetTokenExpiration = Date.now() + 60 * 60 * 1000;
+            return await user.save();
+        } else {
+            throw new ResetPasswordError('No account with that email found!');
+        }
 };
 
 userSchema.methods.addToCart = async function (product) {

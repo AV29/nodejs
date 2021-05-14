@@ -33,3 +33,11 @@ export class LoginError extends Error {
         Error.captureStackTrace(this, LoginError);
     }
 }
+
+export class ResetPasswordError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'ResetPasswordError';
+        Error.captureStackTrace(this, LoginError);
+    }
+}

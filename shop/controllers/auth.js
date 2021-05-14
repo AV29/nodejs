@@ -1,5 +1,5 @@
 import sendMail from '../utils/sendMail.js';
-import { SignupError, LoginError } from '../utils/errors.js';
+import { SignupError, LoginError, ResetPasswordError } from '../utils/errors.js';
 import User from '../models/user.js';
 
 export const getLogin = async (req, res, next) => {
@@ -47,7 +47,6 @@ export const postSignup = async (req, res, next) => {
         });
     } catch (err) {
         if (err instanceof SignupError) {
-            console.log(err);
             req.flash('error', err.message);
             res.redirect('/signup');
         } else {
@@ -62,5 +61,50 @@ export const postLogout = async (req, res, next) => {
         res.redirect('/');
     } catch (err) {
         console.error(err);
+    }
+};
+
+export const getReset = async (req, res, next) => {
+    res.render('auth/reset', {
+        pageTitle: 'Reset Password',
+        path: '/reset',
+        errorMessage: req.flash('error')[0]
+    });
+};
+
+export const postReset = async (req, res, next) => {
+    try {
+        const user = await User.resetPassword(req.body.email);
+        res.redirect('/');
+        await sendMail({
+            to: req.body.email,
+            subject: 'Reset password',
+            html: `
+                <p>You required password reset!</p>
+                <p>Click this <a href="http://localhost:3000/reset/${user.resetToken}">link</a></p>
+            `
+        });
+    } catch (err) {
+        if (err instanceof ResetPasswordError) {
+            req.flash('error', err.message);
+            res.redirect('/reset');
+        } else {
+            console.error(err);
+        }
+    }
+};
+
+export const getNewPassword = async (req, res, next) => {
+    try {
+        const token = req.params.token;
+        const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
+        res.render('auth/new-password', {
+            pageTitle: 'New Password',
+            path: '/new-password',
+            userId: user._id.toString(),
+            errorMessage: req.flash('error')[0]
+        });
+    } catch (e) {
+
     }
 };
