@@ -48,7 +48,7 @@ export const postSignup = async (req, res, next) => {
                 errorMessage: errors.array()[0].msg
             });
         }
-        await User.signup(req.body.email, req.body.password, req.body.confirmPassword);
+        await User.signup(req.body.email, req.body.password);
         res.redirect('/login');
         return await sendMail({
             to: req.body.email,
@@ -56,12 +56,7 @@ export const postSignup = async (req, res, next) => {
             html: '<h1>You have successfully registered!</h1>'
         });
     } catch (err) {
-        if (err instanceof SignupError) {
-            req.flash('error', err.message);
-            res.redirect('/signup');
-        } else {
-            console.error(err);
-        }
+        console.error(err);
     }
 };
 
