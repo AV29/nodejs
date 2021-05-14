@@ -1,3 +1,4 @@
+import { validationResult } from 'express-validator';
 import sendMail from '../utils/sendMail.js';
 import { SignupError, LoginError, ResetPasswordError } from '../utils/errors.js';
 import User from '../models/user.js';
@@ -38,6 +39,15 @@ export const getSignup = async (req, res, next) => {
 
 export const postSignup = async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).render('auth/signup', {
+                pageTitle: 'Signup',
+                isAuthenticated: false,
+                path: '/signup',
+                errorMessage: errors.array()[0].msg
+            });
+        }
         await User.signup(req.body.email, req.body.password, req.body.confirmPassword);
         res.redirect('/login');
         return await sendMail({

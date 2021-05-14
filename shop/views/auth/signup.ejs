@@ -7,7 +7,7 @@
     <%- include('../includes/navigation.ejs') %>
     <main>
         <%- include('../includes/user-feedback.ejs') %>
-        <form class="login-form" action="/signup" method="post">
+        <form class="login-form" action="/signup" method="post" novalidate>
             <div class="form-control">
                 <label for="email">E-Mail</label>
                 <input type="email" name="email" id="email">
