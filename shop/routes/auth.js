@@ -1,6 +1,6 @@
 import express from 'express';
-import { check } from 'express-validator';
 import * as authController from '../controllers/auth.js';
+import signupValidators from '../validators/signup.js';
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.post('/login', authController.postLogin);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/signup', check('email').isEmail().withMessage('Provided email is invalid'), authController.postSignup);
+router.post('/signup', signupValidators, authController.postSignup);
 
 router.get('/reset', authController.getReset);
 
