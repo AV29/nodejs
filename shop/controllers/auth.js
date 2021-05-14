@@ -14,6 +14,7 @@ export const getLogin = async (req, res, next) => {
 
 export const postLogin = async (req, res, next) => {
     try {
+        const { email, password } = req.body;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).render('auth/login', {
@@ -23,7 +24,7 @@ export const postLogin = async (req, res, next) => {
                 errorMessage: errors.array()[0].msg
             });
         }
-        req.session.user = await User.login(req.body.email, req.body.password);
+        req.session.user = await User.login(email, password);
         req.session.isAuthenticated = true;
         await req.session.save();
         res.redirect('/');
@@ -42,22 +43,33 @@ export const getSignup = async (req, res, next) => {
         pageTitle: 'Signup',
         isAuthenticated: false,
         path: '/signup',
+        inputState: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+        },
         errorMessage: req.flash('error')[0]
     });
 };
 
 export const postSignup = async (req, res, next) => {
     try {
+        const { email, password, confirmPassword } = req.body;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).render('auth/signup', {
                 pageTitle: 'Signup',
                 isAuthenticated: false,
                 path: '/signup',
-                errorMessage: errors.array()[0].msg
+                errorMessage: errors.array()[0].msg,
+                inputState: {
+                    email: email,
+                    password: password,
+                    confirmPassword: confirmPassword
+                }
             });
         }
-        await User.signup(req.body.email, req.body.password);
+        await User.signup(email, password);
         res.redirect('/login');
         return await sendMail({
             to: req.body.email,

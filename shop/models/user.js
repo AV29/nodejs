@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
-import { SignupError, LoginError, ResetPasswordError } from '../utils/errors.js';
+import { LoginError, ResetPasswordError } from '../utils/errors.js';
 
 const Schema = mongoose.Schema;
 
