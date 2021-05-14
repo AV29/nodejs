@@ -68,7 +68,7 @@ userSchema.statics.signup = async function (email, password, confirmPassword) {
     }
 };
 
-userSchema.statics.resetPassword = async function (email) {
+userSchema.statics.sendResetPassword = async function (email) {
         const User = this;
         const token = await crypto.randomBytes(32).toString('hex');
         const user = await User.findOne({ email: email });

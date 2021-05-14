@@ -1,4 +1,5 @@
 import sendMail from '../utils/sendMail.js';
+import bcrypt from 'bcryptjs';
 import { SignupError, LoginError, ResetPasswordError } from '../utils/errors.js';
 import User from '../models/user.js';
 
@@ -74,7 +75,7 @@ export const getReset = async (req, res, next) => {
 
 export const postReset = async (req, res, next) => {
     try {
-        const user = await User.resetPassword(req.body.email);
+        const user = await User.sendResetPassword(req.body.email);
         res.redirect('/');
         await sendMail({
             to: req.body.email,
@@ -98,13 +99,38 @@ export const getNewPassword = async (req, res, next) => {
     try {
         const token = req.params.token;
         const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
-        res.render('auth/new-password', {
-            pageTitle: 'New Password',
-            path: '/new-password',
-            userId: user._id.toString(),
-            errorMessage: req.flash('error')[0]
-        });
-    } catch (e) {
+        if(user) {
+            res.render('auth/new-password', {
+                pageTitle: 'New Password',
+                path: '/new-password',
+                userId: user._id.toString(),
+                passwordToken: token,
+                errorMessage: req.flash('error')[0]
+            });
+        } else {
+            // ...
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
 
+export const postNewPassword = async (req, res, next) => {
+    try {
+        const newPassword = req.body.password;
+        const userId = req.body.userId;
+        const passwordToken = req.body.passwordToken;
+        const user = await User.findOne({ _id: userId, resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() } });
+        if(user) {
+            user.password = await bcrypt.hash(newPassword, 12);
+            user.resetToken = null;
+            user.resetTokenExpiration = null;
+            await user.save();
+            res.redirect('/login');
+        } else {
+            //...
+        }
+    } catch (err) {
+        console.error(err);
     }
 };
