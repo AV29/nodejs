@@ -68,7 +68,7 @@ userSchema.statics.signup = async function (email, password, confirmPassword) {
     }
 };
 
-userSchema.statics.sendResetPassword = async function (email) {
+userSchema.statics.setResetPasswordToken = async function (email) {
         const User = this;
         const token = await crypto.randomBytes(32).toString('hex');
         const user = await User.findOne({ email: email });
@@ -79,6 +79,19 @@ userSchema.statics.sendResetPassword = async function (email) {
         } else {
             throw new ResetPasswordError('No account with that email found!');
         }
+};
+
+userSchema.statics.resetPassword = async function (newPassword, userId, passwordToken) {
+    const User = this;
+    const user = await User.findOne({ _id: userId, resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() } });
+    if(user) {
+        user.password = await bcrypt.hash(newPassword, 12);
+        user.resetToken = null;
+        user.resetTokenExpiration = null;
+        return await user.save();
+    } else {
+        throw new ResetPasswordError('An error occurred while trying to reset password!');
+    }
 };
 
 userSchema.methods.addToCart = async function (product) {

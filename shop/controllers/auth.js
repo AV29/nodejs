@@ -75,7 +75,7 @@ export const getReset = async (req, res, next) => {
 
 export const postReset = async (req, res, next) => {
     try {
-        const user = await User.sendResetPassword(req.body.email);
+        const user = await User.setResetPasswordToken(req.body.email);
         res.redirect('/');
         await sendMail({
             to: req.body.email,
@@ -99,7 +99,7 @@ export const getNewPassword = async (req, res, next) => {
     try {
         const token = req.params.token;
         const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
-        if(user) {
+        if (user) {
             res.render('auth/new-password', {
                 pageTitle: 'New Password',
                 path: '/new-password',
@@ -108,7 +108,8 @@ export const getNewPassword = async (req, res, next) => {
                 errorMessage: req.flash('error')[0]
             });
         } else {
-            // ...
+            req.flash('error', 'Invalid data provided');
+            res.redirect('/login');
         }
     } catch (err) {
         console.error(err);
@@ -120,17 +121,14 @@ export const postNewPassword = async (req, res, next) => {
         const newPassword = req.body.password;
         const userId = req.body.userId;
         const passwordToken = req.body.passwordToken;
-        const user = await User.findOne({ _id: userId, resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() } });
-        if(user) {
-            user.password = await bcrypt.hash(newPassword, 12);
-            user.resetToken = null;
-            user.resetTokenExpiration = null;
-            await user.save();
+        await User.resetPassword(newPassword, userId, passwordToken);
+        res.redirect('/login');
+    } catch (err) {
+        if (err instanceof ResetPasswordError) {
+            req.flash('error', err.message);
             res.redirect('/login');
         } else {
-            //...
+            console.error(err);
         }
-    } catch (err) {
-        console.error(err);
     }
 };
