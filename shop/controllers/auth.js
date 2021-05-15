@@ -8,20 +8,29 @@ export const getLogin = async (req, res, next) => {
         pageTitle: 'Login',
         isAuthenticated: false,
         path: '/login',
-        errorMessage: req.flash('error')[0]
+        errorMessage: req.flash('error')[0],
+        inputState: {
+            email: '',
+            password: ''
+        }
     });
 };
 
 export const postLogin = async (req, res, next) => {
+    const { email, password } = req.body;
     try {
-        const { email, password } = req.body;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).render('auth/login', {
                 pageTitle: 'Login',
                 isAuthenticated: false,
                 path: '/login',
-                errorMessage: errors.array()[0].msg
+                errorMessage: errors.array()[0].msg,
+                inputState: {
+                    email: email,
+                    password: password
+                },
+                validationErrors: errors.array()
             });
         }
         req.session.user = await User.login(email, password);
@@ -30,8 +39,17 @@ export const postLogin = async (req, res, next) => {
         res.redirect('/');
     } catch (err) {
         if (err instanceof LoginError) {
-            req.flash('error', err.message);
-            res.redirect('/login');
+            return res.status(422).render('auth/login', {
+                pageTitle: 'Login',
+                isAuthenticated: false,
+                path: '/login',
+                errorMessage: err.message,
+                inputState: {
+                    email: email,
+                    password: password
+                },
+                validationErrors: []
+            });
         } else {
             console.error(err);
         }
