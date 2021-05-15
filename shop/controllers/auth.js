@@ -48,6 +48,7 @@ export const getSignup = async (req, res, next) => {
             password: '',
             confirmPassword: ''
         },
+        validationErrors: [],
         errorMessage: req.flash('error')[0]
     });
 };
@@ -62,6 +63,7 @@ export const postSignup = async (req, res, next) => {
                 isAuthenticated: false,
                 path: '/signup',
                 errorMessage: errors.array()[0].msg,
+                validationErrors: errors.array(),
                 inputState: {
                     email: email,
                     password: password,
