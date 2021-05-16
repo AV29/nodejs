@@ -9,6 +9,7 @@ export const getLogin = async (req, res, next) => {
         isAuthenticated: false,
         path: '/login',
         errorMessage: req.flash('error')[0],
+        validationErrors: [],
         inputState: {
             email: '',
             password: ''

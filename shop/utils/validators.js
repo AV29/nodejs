@@ -1,6 +1,7 @@
 import { body } from 'express-validator';
 import User from '../models/user.js';
 import { SignupError } from './errors.js';
+import { MIN_PASSWORD_LENGTH } from './constants.js';
 
 export const signupValidators = [
     body('email', 'Provided email is invalid')
@@ -11,7 +12,9 @@ export const signupValidators = [
             else return true;
         })
         .normalizeEmail(),
-    body('password', 'Password length must be 5 characters min').isLength({ min: 5 }).trim(),
+    body('password', `Password length must be ${MIN_PASSWORD_LENGTH} characters min`)
+        .isLength({ min: MIN_PASSWORD_LENGTH })
+        .trim(),
     body('confirmPassword', 'Passwords have to match!')
         .custom((value, { req }) => value === req.body.password)
         .trim()
@@ -19,5 +22,16 @@ export const signupValidators = [
 
 export const loginValidators = [
     body('email', 'Provided email is invalid').isEmail().withMessage('Please enter valid email').normalizeEmail(),
-    body('password', 'Password has to be valid').isLength({ min: 5 }).trim()
+    body('password', `Password length must be ${MIN_PASSWORD_LENGTH} characters min`)
+        .isLength({ min: MIN_PASSWORD_LENGTH })
+        .trim()
+];
+
+export const addProductValidators = [
+    body('title', 'Title must contain at least one character').isLength({ min: 1 }).trim(),
+    body('imageUrl', 'Image URL must be a valid url').isURL().trim(),
+    body('price', 'Price should be of float type').isFloat().trim(),
+    body('description', 'Description length should be minimum 5 and maximum 200 characters')
+        .isLength({ min: 5, max: 200 })
+        .trim()
 ];

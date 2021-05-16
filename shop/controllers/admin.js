@@ -1,10 +1,14 @@
 import Product from '../models/product.js';
+import { validationResult } from 'express-validator';
 
 export const getAddProduct = async (req, res, next) => {
     res.render('admin/edit-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
         isEditing: false,
+        hasError: false,
+        errorMessage: null,
+        validationErrors: [],
         product: {
             title: '',
             price: 0,
@@ -17,6 +21,23 @@ export const getAddProduct = async (req, res, next) => {
 export const postAddProduct = async (req, res, next) => {
     const { title, description, imageUrl, price } = req.body;
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).render('admin/edit-product', {
+                pageTitle: 'Add Product',
+                path: '/admin/add-product',
+                isEditing: false,
+                hasError: true,
+                validationErrors: errors.array(),
+                errorMessage: errors.array()[0].msg,
+                product: {
+                    title: title,
+                    price: price,
+                    imageUrl: imageUrl,
+                    description: description
+                }
+            });
+        }
         const product = new Product({
             title: title,
             description: description,
@@ -78,6 +99,8 @@ export const getEditProduct = async (req, res, next) => {
             pageTitle: 'Edit Product',
             path: '/admin/edit-product',
             isEditing: true,
+            hasError: false,
+            errorMessage: null,
             product: product
         });
     } catch (err) {
