@@ -67,24 +67,6 @@ export const getProducts = async (req, res, next) => {
     }
 };
 
-export const postEditProduct = async (req, res, next) => {
-    try {
-        const product = await Product.findById(req.body.productId);
-        if (product.userId.toString() !== req.user._id.toString()) {
-            res.redirect('/');
-        } else {
-            product.title = req.body.title;
-            product.description = req.body.description;
-            product.price = req.body.price;
-            product.imageUrl = req.body.imageUrl;
-            await product.save();
-            res.redirect('/admin/products');
-        }
-    } catch (err) {
-        console.error(err);
-    }
-};
-
 export const getEditProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.productId);
@@ -101,8 +83,46 @@ export const getEditProduct = async (req, res, next) => {
             isEditing: true,
             hasError: false,
             errorMessage: null,
-            product: product
+            product: product,
+            validationErrors: []
         });
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+export const postEditProduct = async (req, res, next) => {
+    try {
+        const { title, description, price, imageUrl, productId } = req.body;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).render('admin/edit-product', {
+                pageTitle: 'Edit Product',
+                path: '/admin/edit-product',
+                isEditing: true,
+                hasError: true,
+                validationErrors: errors.array(),
+                errorMessage: errors.array()[0].msg,
+                product: {
+                    _id: productId,
+                    title: title,
+                    price: price,
+                    imageUrl: imageUrl,
+                    description: description
+                }
+            });
+        }
+        const product = await Product.findById(req.body.productId);
+        if (product.userId.toString() !== req.user._id.toString()) {
+            res.redirect('/');
+        } else {
+            product.title = title;
+            product.description = description;
+            product.price = price;
+            product.imageUrl = imageUrl;
+            await product.save();
+            res.redirect('/admin/products');
+        }
     } catch (err) {
         console.error(err);
     }
