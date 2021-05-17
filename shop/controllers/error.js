@@ -5,3 +5,11 @@ export const get404 = async (req, res, next) => {
         errorMessage: ''
     });
 };
+
+export const get500 = async (req, res, next) => {
+    res.status(500).render('500', {
+        pageTitle: 'Error',
+        path: '/',
+        errorMessage: ''
+    });
+};

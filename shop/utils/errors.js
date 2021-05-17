@@ -41,3 +41,11 @@ export class ResetPasswordError extends Error {
         Error.captureStackTrace(this, LoginError);
     }
 }
+
+export class DataBaseInteractionError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'DataBaseInteractionError';
+        Error.captureStackTrace(this, DataBaseInteractionError);
+    }
+}

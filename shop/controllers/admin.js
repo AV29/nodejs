@@ -1,4 +1,5 @@
 import Product from '../models/product.js';
+import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
 
 export const getAddProduct = async (req, res, next) => {
@@ -39,6 +40,7 @@ export const postAddProduct = async (req, res, next) => {
             });
         }
         const product = new Product({
+            _id: new mongoose.Types.ObjectId('60a17c88f3221b10aa804395'),
             title: title,
             description: description,
             imageUrl: imageUrl,
@@ -48,7 +50,11 @@ export const postAddProduct = async (req, res, next) => {
         await product.save();
         res.redirect('/admin/products');
     } catch (err) {
-        console.error(err);
+        res.status(500).render('500', {
+            path: '/admin/add-product',
+            pageTitle: 'Error',
+            errorMessage: 'Data base interaction error!'
+        });
     }
 };
 

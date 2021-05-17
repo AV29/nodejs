@@ -28,6 +28,7 @@ app.use(getViewData);
 app.use(shopRoutes);
 app.use(authRoutes);
 app.use('/admin', adminRoutes);
+//app.get('/500', errorController.get500);
 app.use(errorController.get404);
 
 try {
