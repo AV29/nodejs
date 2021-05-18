@@ -28,8 +28,9 @@ app.use(getViewData);
 app.use(shopRoutes);
 app.use(authRoutes);
 app.use('/admin', adminRoutes);
-//app.get('/500', errorController.get500);
+app.get('/error', errorController.getError);
 app.use(errorController.get404);
+app.use(errorController.handleAllErrors);
 
 try {
     await mongoose.connect(MONGODB_URI, {

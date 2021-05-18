@@ -1,6 +1,7 @@
 import Product from '../models/product.js';
 import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
+import { HttpError } from '../utils/errors.js';
 
 export const getAddProduct = async (req, res, next) => {
     res.render('admin/edit-product', {
@@ -50,11 +51,7 @@ export const postAddProduct = async (req, res, next) => {
         await product.save();
         res.redirect('/admin/products');
     } catch (err) {
-        res.status(500).render('500', {
-            path: '/admin/add-product',
-            pageTitle: 'Error',
-            errorMessage: 'Data base interaction error!'
-        });
+        return next(new HttpError(500, 'Creating a product failed!'));
     }
 };
 
@@ -69,7 +66,7 @@ export const getProducts = async (req, res, next) => {
             path: '/admin/products'
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Could not get products!'));
     }
 };
 
@@ -77,11 +74,7 @@ export const getEditProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.productId);
         if (!product) {
-            return res.status(404).render('404', {
-                pageTitle: 'Page Not Found',
-                path: '/',
-                errorMessage: `There is no product with ID: ${req.params.productId}!`
-            });
+            return next(new HttpError(404, `There is no product with ID: ${req.params.productId}!`));
         }
         res.render('admin/edit-product', {
             pageTitle: 'Edit Product',
@@ -93,7 +86,7 @@ export const getEditProduct = async (req, res, next) => {
             validationErrors: []
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Could not get to edit product page!'));
     }
 };
 
@@ -130,7 +123,7 @@ export const postEditProduct = async (req, res, next) => {
             res.redirect('/admin/products');
         }
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Edit product operation failed!'));
     }
 };
 
@@ -140,6 +133,6 @@ export const postDeleteProduct = async (req, res, next) => {
         await req.user.removeFromCart(req.body.productId);
         res.redirect('/admin/products');
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Delete product operation failed!'));
     }
 };
