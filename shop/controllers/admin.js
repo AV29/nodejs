@@ -1,5 +1,4 @@
 import Product from '../models/product.js';
-import mongoose from 'mongoose';
 import { validationResult } from 'express-validator';
 import { HttpError } from '../utils/errors.js';
 
@@ -21,7 +20,8 @@ export const getAddProduct = async (req, res, next) => {
 };
 
 export const postAddProduct = async (req, res, next) => {
-    const { title, description, imageUrl, price } = req.body;
+    const { title, description, price } = req.body;
+    const image = req.file;
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

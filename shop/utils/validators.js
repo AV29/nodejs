@@ -29,7 +29,6 @@ export const loginValidators = [
 
 export const addProductValidators = [
     body('title', 'Title must contain at least one character').isLength({ min: 1 }).trim(),
-    body('imageUrl', 'Image URL must be a valid url').isURL().trim(),
     body('price', 'Price should be of float type').isFloat().trim(),
     body('description', 'Description length should be minimum 5 and maximum 200 characters')
         .isLength({ min: 5, max: 200 })

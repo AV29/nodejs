@@ -7,7 +7,12 @@
     <%- include('../includes/navigation.ejs') %>
     <main>
         <%- include('../includes/user-feedback.ejs') %>
-        <form class="product-form" action="/admin/<% if (isEditing) { %>edit-product<% } else { %>add-product<% } %>" method="POST">
+        <form
+                class="product-form"
+                action="/admin/<% if (isEditing) { %>edit-product<% } else { %>add-product<% } %>"
+                method="POST"
+                enctype="multipart/form-data"
+        >
             <div class="form-control">
                 <label for="title">Title</label>
                 <input
@@ -18,7 +23,7 @@
                         value="<% if (isEditing || hasError) { %><%= product.title %><% } %>"
                 >
             </div>
-            <div class="form-control">
+            <!--<div class="form-control">
                 <label for="imageUrl">Image URL</label>
                 <input
                         class="<%= validationErrors.find(e => e.param === 'imageUrl') ? 'invalid' : ''%>"
@@ -26,6 +31,14 @@
                         name="imageUrl"
                         id="imageUrl"
                         value="<% if (isEditing || hasError) { %><%= product.imageUrl %><% } %>"
+                >
+            </div>-->
+            <div class="form-control">
+                <label for="image">Image</label>
+                <input
+                        type="file"
+                        name="image"
+                        id="image"
                 >
             </div>
             <div class="form-control">

@@ -32,7 +32,7 @@ export const getError = async (req, res, next) => {
 };
 
 export const handleAllErrors = async (err, req, res, next) => {
-    if(err instanceof UserSessionError) {
+    if (err instanceof UserSessionError) {
         return res.status(500).render('errors/error', {
             pageTitle: 'Error',
             path: '/',
