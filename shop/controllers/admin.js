@@ -13,7 +13,6 @@ export const getAddProduct = async (req, res, next) => {
         product: {
             title: '',
             price: 0,
-            imageUrl: '',
             description: ''
         }
     });
@@ -22,6 +21,21 @@ export const getAddProduct = async (req, res, next) => {
 export const postAddProduct = async (req, res, next) => {
     const { title, description, price } = req.body;
     const image = req.file;
+    if (!image) {
+        return res.status(422).render('admin/edit-product', {
+            pageTitle: 'Add Product',
+            path: '/admin/add-product',
+            isEditing: false,
+            hasError: true,
+            validationErrors: [],
+            errorMessage: 'Attached file is not an image',
+            product: {
+                title: title,
+                price: price,
+                description: description
+            }
+        });
+    }
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -35,7 +49,6 @@ export const postAddProduct = async (req, res, next) => {
                 product: {
                     title: title,
                     price: price,
-                    imageUrl: imageUrl,
                     description: description
                 }
             });
@@ -44,7 +57,6 @@ export const postAddProduct = async (req, res, next) => {
             //_id: new mongoose.Types.ObjectId('60a17c88f3221b10aa804395'),
             title: title,
             description: description,
-            imageUrl: imageUrl,
             price: price,
             userId: req.session.user
         });
@@ -58,7 +70,7 @@ export const postAddProduct = async (req, res, next) => {
 export const getProducts = async (req, res, next) => {
     try {
         const products = await Product.find({ userId: req.user._id });
-        // .select('title price imageUrl')
+        // .select('title price')
         // .populate('userId', 'name');
         res.render('admin/products', {
             pageTitle: 'Admin Products',
@@ -92,7 +104,7 @@ export const getEditProduct = async (req, res, next) => {
 
 export const postEditProduct = async (req, res, next) => {
     try {
-        const { title, description, price, imageUrl, productId } = req.body;
+        const { title, description, price, productId } = req.body;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).render('admin/edit-product', {
@@ -106,7 +118,6 @@ export const postEditProduct = async (req, res, next) => {
                     _id: productId,
                     title: title,
                     price: price,
-                    imageUrl: imageUrl,
                     description: description
                 }
             });
@@ -118,7 +129,6 @@ export const postEditProduct = async (req, res, next) => {
             product.title = title;
             product.description = description;
             product.price = price;
-            product.imageUrl = imageUrl;
             await product.save();
             res.redirect('/admin/products');
         }
