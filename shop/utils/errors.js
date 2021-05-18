@@ -38,14 +38,14 @@ export class ResetPasswordError extends Error {
     constructor(message) {
         super(message);
         this.name = 'ResetPasswordError';
-        Error.captureStackTrace(this, LoginError);
+        Error.captureStackTrace(this, ResetPasswordError);
     }
 }
 
-export class DataBaseInteractionError extends Error {
+export class UserSessionError extends Error {
     constructor(message) {
         super(message);
-        this.name = 'DataBaseInteractionError';
-        Error.captureStackTrace(this, DataBaseInteractionError);
+        this.name = 'UserSessionError';
+        Error.captureStackTrace(this, UserSessionError);
     }
 }

@@ -1,3 +1,5 @@
+import { UserSessionError } from '../utils/errors.js';
+
 export const get404 = async (req, res, next) => {
     res.status(404).render('errors/404', {
         pageTitle: 'Page Not Found',
@@ -30,6 +32,16 @@ export const getError = async (req, res, next) => {
 };
 
 export const handleAllErrors = async (err, req, res, next) => {
+    if(err instanceof UserSessionError) {
+        return res.status(500).render('errors/error', {
+            pageTitle: 'Error',
+            path: '/',
+            errorMessage: err.message,
+            isAuthenticated: false,
+            status: 500
+        });
+    }
+
     if (req.session) {
         req.session.error = {
             message: err.message,
