@@ -18,6 +18,7 @@ import { handleAllErrors } from './controllers/error.js';
 
 const app = express();
 const protectCSRF = csrf({ cookie: false });
+const rootPath = path.dirname(fileURLToPath(import.meta.url));
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,7 +26,8 @@ app.use(imageUpload);
 app.use(getSession);
 app.use(protectCSRF);
 app.use(flash());
-app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')));
+app.use(express.static(path.join(rootPath, 'public')));
+app.use('/images', express.static(path.join(rootPath, 'images')));
 app.use(getUser);
 app.use(getViewData);
 app.use(shopRoutes);

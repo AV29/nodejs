@@ -1,4 +1,5 @@
 .idea/
 ws-chat/debug.log
 node_modules/
+/images
 *.env

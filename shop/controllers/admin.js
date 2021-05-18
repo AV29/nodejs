@@ -12,6 +12,7 @@ export const getAddProduct = async (req, res, next) => {
         validationErrors: [],
         product: {
             title: '',
+            imageUrl: '',
             price: 0,
             description: ''
         }
@@ -53,11 +54,13 @@ export const postAddProduct = async (req, res, next) => {
                 }
             });
         }
+
+        const imageUrl = image.path;
         const product = new Product({
-            //_id: new mongoose.Types.ObjectId('60a17c88f3221b10aa804395'),
             title: title,
             description: description,
             price: price,
+            imageUrl: imageUrl,
             userId: req.session.user
         });
         await product.save();
@@ -105,6 +108,7 @@ export const getEditProduct = async (req, res, next) => {
 export const postEditProduct = async (req, res, next) => {
     try {
         const { title, description, price, productId } = req.body;
+        const image = req.file;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).render('admin/edit-product', {
@@ -129,6 +133,9 @@ export const postEditProduct = async (req, res, next) => {
             product.title = title;
             product.description = description;
             product.price = price;
+            if(image) {
+                product.imageUrl = image.path;
+            }
             await product.save();
             res.redirect('/admin/products');
         }
