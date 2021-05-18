@@ -6,6 +6,14 @@ export const get404 = async (req, res, next) => {
     });
 };
 
+export const get500 = async (req, res, next) => {
+    res.status(500).render('errors/500', {
+        pageTitle: 'Error',
+        path: '/',
+        errorMessage: ''
+    });
+};
+
 export const getError = async (req, res, next) => {
     if (req.session.error) {
         const error = { ...req.session.error };
@@ -28,5 +36,5 @@ export const handleAllErrors = async (err, req, res, next) => {
             status: err.status
         };
     }
-    return res.redirect('/error');
+    return res.redirect('/500');
 };

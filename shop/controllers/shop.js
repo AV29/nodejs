@@ -1,7 +1,8 @@
 import Product from '../models/product.js';
 import Order from '../models/order.js';
+import { HttpError } from '../utils/errors.js';
 
-export const getIndex = async (req, res) => {
+export const getIndex = async (req, res, next) => {
     try {
         const products = await Product.find();
         res.render('shop/index', {
@@ -10,11 +11,11 @@ export const getIndex = async (req, res) => {
             path: '/'
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Getting products failed!'));
     }
 };
 
-export const getProducts = async (req, res) => {
+export const getProducts = async (req, res, next) => {
     try {
         const products = await Product.find();
         res.render('shop/product-list', {
@@ -23,11 +24,11 @@ export const getProducts = async (req, res) => {
             path: '/products'
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Getting products failed!'));
     }
 };
 
-export const getProduct = async (req, res) => {
+export const getProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.productId);
         res.render('shop/product-detail', {
@@ -36,11 +37,11 @@ export const getProduct = async (req, res) => {
             path: '/products'
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Getting a product failed!'));
     }
 };
 
-export const getCart = async (req, res) => {
+export const getCart = async (req, res, next) => {
     try {
         const user = await req.user.populate('cart.items.productId').execPopulate();
         res.render('shop/cart', {
@@ -49,18 +50,18 @@ export const getCart = async (req, res) => {
             products: user.cart.items
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Getting to your cart failed!'));
     }
 };
 
-export const postCart = async (req, res) => {
+export const postCart = async (req, res, next) => {
     try {
         const productId = req.body.productId;
         const product = await Product.findById(productId);
         await req.user.addToCart(product);
         res.redirect('/cart');
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Saving your cart failed!'));
     }
 };
 
@@ -69,11 +70,11 @@ export const postDeleteCartProduct = async (req, res, next) => {
         await req.user.removeFromCart(req.body.productId);
         res.redirect('/cart');
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Deleting your cart failed!'));
     }
 };
 
-export const postOrder = async (req, res) => {
+export const postOrder = async (req, res, next) => {
     try {
         const { cart } = await req.user.populate('cart.items.productId').execPopulate();
         const order = new Order({
@@ -90,11 +91,11 @@ export const postOrder = async (req, res) => {
         await req.user.clearCart();
         res.redirect('/orders');
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Placing your order failed!'));
     }
 };
 
-export const getOrders = async (req, res) => {
+export const getOrders = async (req, res, next) => {
     try {
         const orders = await Order.find({ 'user.userId': req.session.user._id });
         res.render('shop/orders', {
@@ -103,6 +104,6 @@ export const getOrders = async (req, res) => {
             orders: orders
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Getting your order failed!'));
     }
 };

@@ -1,6 +1,6 @@
 import { validationResult } from 'express-validator';
 import sendMail from '../utils/sendMail.js';
-import { LoginError, ResetPasswordError } from '../utils/errors.js';
+import { HttpError, LoginError, ResetPasswordError } from '../utils/errors.js';
 import User from '../models/user.js';
 
 export const getLogin = async (req, res, next) => {
@@ -52,7 +52,7 @@ export const postLogin = async (req, res, next) => {
                 validationErrors: []
             });
         } else {
-            console.error(err);
+            return next(new HttpError(500, 'Authenticating user failed!'));
         }
     }
 };
@@ -98,7 +98,7 @@ export const postSignup = async (req, res, next) => {
             html: '<h1>You have successfully registered!</h1>'
         });
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Signing up failed!'));
     }
 };
 
@@ -107,7 +107,7 @@ export const postLogout = async (req, res, next) => {
         await req.session.destroy();
         res.redirect('/');
     } catch (err) {
-        console.error(err);
+        return next(new HttpError(500, 'Logging out failed!'));
     }
 };
 
@@ -136,7 +136,7 @@ export const postReset = async (req, res, next) => {
             req.flash('error', err.message);
             res.redirect('/reset');
         } else {
-            console.error(err);
+            return next(new HttpError(500, 'Resetting password failed!'));
         }
     }
 };
@@ -156,7 +156,7 @@ export const getNewPassword = async (req, res, next) => {
             req.flash('error', err.message);
             res.redirect('/login');
         } else {
-            console.error(err);
+            return next(new HttpError(500, 'Getting to reset password failed!'));
         }
     }
 };
@@ -173,7 +173,7 @@ export const postNewPassword = async (req, res, next) => {
             req.flash('error', err.message);
             res.redirect('/login');
         } else {
-            console.error(err);
+            return next(new HttpError(500, 'Setting new password failed!'));
         }
     }
 };
