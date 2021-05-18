@@ -1,6 +1,7 @@
 import Product from '../models/product.js';
 import { validationResult } from 'express-validator';
 import { HttpError } from '../utils/errors.js';
+import getImageUrl from '../utils/getImageUrl.js';
 
 export const getAddProduct = async (req, res, next) => {
     res.render('admin/edit-product', {
@@ -55,7 +56,7 @@ export const postAddProduct = async (req, res, next) => {
             });
         }
 
-        const imageUrl = image.path;
+        const imageUrl = getImageUrl(image.filename);
         const product = new Product({
             title: title,
             description: description,
@@ -133,8 +134,8 @@ export const postEditProduct = async (req, res, next) => {
             product.title = title;
             product.description = description;
             product.price = price;
-            if(image) {
-                product.imageUrl = image.path;
+            if (image) {
+                product.imageUrl = getImageUrl(image.filename);
             }
             await product.save();
             res.redirect('/admin/products');

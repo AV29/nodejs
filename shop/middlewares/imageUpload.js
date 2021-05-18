@@ -1,8 +1,9 @@
 import multer from 'multer';
+import { IMAGES_PATH } from '../utils/constants.js';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './images');
+        cb(null, `./public${IMAGES_PATH}`);
     },
     filename: function (req, file, cb) {
         cb(null, `${new Date().toISOString()}_${file.originalname}`);

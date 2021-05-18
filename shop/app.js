@@ -27,7 +27,6 @@ app.use(getSession);
 app.use(protectCSRF);
 app.use(flash());
 app.use(express.static(path.join(rootPath, 'public')));
-app.use('/images', express.static(path.join(rootPath, 'images')));
 app.use(getUser);
 app.use(getViewData);
 app.use(shopRoutes);
