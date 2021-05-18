@@ -16,13 +16,13 @@ export const get500 = async (req, res, next) => {
 
 export const getError = async (req, res, next) => {
     if (req.session.error) {
-        const error = { ...req.session.error };
+        const { message, status } = req.session.error;
         req.session.error = null;
-        res.status(req.session.status || 500).render('errors/error', {
+        res.status(status || 500).render('errors/error', {
             pageTitle: 'Error',
             path: '/',
-            errorMessage: error.message,
-            status: error.status
+            errorMessage: message,
+            status: status
         });
     } else {
         next();
@@ -35,6 +35,8 @@ export const handleAllErrors = async (err, req, res, next) => {
             message: err.message,
             status: err.status
         };
+        return res.redirect('/error');
+    } else {
+        return res.redirect('/500');
     }
-    return res.redirect('/500');
 };

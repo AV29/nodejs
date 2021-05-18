@@ -8,11 +8,12 @@ import { fileURLToPath } from 'node:url';
 import shopRoutes from './routes/shop.js';
 import adminRoutes from './routes/admin.js';
 import authRoutes from './routes/auth.js';
+import errorRoutes from './routes/error.js';
 import getSession from './middlewares/getSession.js';
 import getUser from './middlewares/getUser.js';
 import getViewData from './middlewares/getViewData.js';
 import MONGODB_URI from './utils/constants.js';
-import * as errorController from './controllers/error.js';
+import { handleAllErrors } from './controllers/error.js';
 
 const app = express();
 const protectCSRF = csrf({ cookie: false });
@@ -28,10 +29,8 @@ app.use(getViewData);
 app.use(shopRoutes);
 app.use(authRoutes);
 app.use('/admin', adminRoutes);
-app.get('/500', errorController.get500);
-app.get('/error', errorController.getError);
-app.use(errorController.get404);
-app.use(errorController.handleAllErrors);
+app.use(errorRoutes);
+app.use(handleAllErrors);
 
 try {
     await mongoose.connect(MONGODB_URI, {
