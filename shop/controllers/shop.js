@@ -106,13 +106,12 @@ export const getOrders = async (req, res, next) => {
             orders: orders
         });
     } catch (err) {
-        return next(new HttpError(500, 'Getting your order failed!'));
+        return next(new HttpError(500, 'Getting your orders failed!'));
     }
 };
 
-const getInvoiceByOrderId = async orderId => {
+const getInvoiceByName = async invoiceName => {
     try {
-        const invoiceName = `invoice-${orderId}.pdf`;
         const invoicePath = path.join('data', 'invoices', invoiceName);
         return await fs.readFile(invoicePath);
     } catch (err) {
@@ -122,12 +121,15 @@ const getInvoiceByOrderId = async orderId => {
 
 export const getInvoice = async (req, res, next) => {
     try {
-        const data = await getInvoiceByOrderId(req.params.orderId);
+        const invoiceName = `invoice-${req.params.orderId}.pdf`;
+        const data = await getInvoiceByName(invoiceName);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${invoiceName}"`);
         res.send(data);
     } catch (err) {
         if (err instanceof HttpError) {
             return next(err);
         }
-        return next(new HttpError(500, 'Getting your order failed!'));
+        return next(new HttpError(500, 'Getting your invoice failed!'));
     }
 };
