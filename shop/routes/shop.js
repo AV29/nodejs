@@ -20,4 +20,6 @@ router.post('/create-order', checkAuth, shopController.postOrder);
 
 router.get('/orders', checkAuth, shopController.getOrders);
 
+router.get('/orders/:orderId', checkAuth, shopController.getInvoice);
+
 export default router;

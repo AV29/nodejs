@@ -1,3 +1,5 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import Product from '../models/product.js';
 import Order from '../models/order.js';
 import { HttpError } from '../utils/errors.js';
@@ -104,6 +106,28 @@ export const getOrders = async (req, res, next) => {
             orders: orders
         });
     } catch (err) {
+        return next(new HttpError(500, 'Getting your order failed!'));
+    }
+};
+
+const getInvoiceByOrderId = async orderId => {
+    try {
+        const invoiceName = `invoice-${orderId}.pdf`;
+        const invoicePath = path.join('data', 'invoices', invoiceName);
+        return await fs.readFile(invoicePath);
+    } catch (err) {
+        throw new HttpError(500, 'Reading file failed!');
+    }
+};
+
+export const getInvoice = async (req, res, next) => {
+    try {
+        const data = await getInvoiceByOrderId(req.params.orderId);
+        res.send(data);
+    } catch (err) {
+        if (err instanceof HttpError) {
+            return next(err);
+        }
         return next(new HttpError(500, 'Getting your order failed!'));
     }
 };
