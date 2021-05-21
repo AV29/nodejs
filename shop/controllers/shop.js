@@ -1,5 +1,6 @@
-import fs from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'node:path';
+import PDFDocument from 'pdfkit';
 import Product from '../models/product.js';
 import Order from '../models/order.js';
 import { HttpError } from '../utils/errors.js';
@@ -126,12 +127,24 @@ export const getInvoice = async (req, res, next) => {
         // if (!data) {
         //     return next(new HttpError(500, 'Failed to read your file!'));
         // }
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);
         // res.send(data);
-        const file = fs.createReadStream(invoicePath);
+
+        
+        const pdf = new PDFDocument();
+        pdf.pipe(fs.createWriteStream(invoicePath));
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);
-        file.pipe(res);
+        pdf.pipe(res);
+        pdf.text('Hello World!');
+        pdf.end();
+        // const file = fs.createReadStream(invoicePath);
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);
+        // file.pipe(res);
     } catch (err) {
+        console.log(err);
         return next(new HttpError(500, 'Getting your invoice failed!'));
     }
 };
