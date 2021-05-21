@@ -122,13 +122,15 @@ export const getInvoice = async (req, res, next) => {
         }
         const invoiceName = `invoice-${orderId}.pdf`;
         const invoicePath = path.join('data', 'invoices', invoiceName);
-        const data = await fs.readFile(invoicePath);
-        if (!data) {
-            return next(new HttpError(500, 'Failed to read your file!'));
-        }
+        // const data = await fs.readFile(invoicePath);
+        // if (!data) {
+        //     return next(new HttpError(500, 'Failed to read your file!'));
+        // }
+        // res.send(data);
+        const file = fs.createReadStream(invoicePath);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);
-        res.send(data);
+        file.pipe(res);
     } catch (err) {
         return next(new HttpError(500, 'Getting your invoice failed!'));
     }
