@@ -110,19 +110,19 @@ export const getOrders = async (req, res, next) => {
     }
 };
 
-const getInvoiceByName = async invoiceName => {
-    try {
-        const invoicePath = path.join('data', 'invoices', invoiceName);
-        return await fs.readFile(invoicePath);
-    } catch (err) {
-        throw new HttpError(500, 'Reading file failed!');
-    }
-};
-
 export const getInvoice = async (req, res, next) => {
     try {
-        const invoiceName = `invoice-${req.params.orderId}.pdf`;
-        const data = await getInvoiceByName(invoiceName);
+        const orderId = req.params.orderId;
+        const order = await Order.findById(orderId);
+        if(!order) {
+            return next(new HttpError(404, 'No order found!'));
+        }
+        if(order.user.userId.toString() !== req.user._id.toString()) {
+            return next(new HttpError(403, 'You are not authorized to view this invoice!'));
+        }
+        const invoiceName = `invoice-${orderId}.pdf`;
+        const invoicePath = path.join('data', 'invoices', invoiceName);
+        const data = await fs.readFile(invoicePath);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${invoiceName}"`);
         res.send(data);
