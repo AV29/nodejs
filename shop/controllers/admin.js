@@ -129,7 +129,7 @@ export const postEditProduct = async (req, res, next) => {
         }
         const product = await Product.findById(req.body.productId);
         if (product.userId.toString() !== req.user._id.toString()) {
-            res.redirect('/');
+            return next(new HttpError(403, 'You are not authorized to modify this product!'));
         } else {
             product.title = title;
             product.description = description;
