@@ -129,7 +129,17 @@ export const getInvoice = async (req, res, next) => {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);
         pdf.pipe(res);
-        pdf.text('Hello World!');
+
+        pdf.fontSize(26).text('Invoice', { underline : true });
+        pdf.text('------------------------------');
+        let totalPrice = 0;
+        pdf.fontSize(14);
+        order.products.forEach(prod => {
+            pdf.text(`${prod.product.title}-${prod.quantity} x $${prod.product.price}`);
+            totalPrice += prod.quantity * prod.product.price;
+        });
+        pdf.text('------------------------------');
+        pdf.fontSize(20).text(`Total Price: ${totalPrice}`);
         pdf.end();
     } catch (err) {
         console.log(err);
