@@ -3,5 +3,3 @@ export const MONGODB_LOCAL_URI = `mongodb://127.0.0.1:27017/${process.env.DB_NAM
 export const MIN_PASSWORD_LENGTH = 5;
 export const IMAGES_PATH = '/images';
 export default MONGODB_LOCAL_URI;
-
-

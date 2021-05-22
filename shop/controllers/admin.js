@@ -2,6 +2,7 @@ import Product from '../models/product.js';
 import { validationResult } from 'express-validator';
 import { HttpError } from '../utils/errors.js';
 import getImageUrl from '../utils/getImageUrl.js';
+import { deleteFile } from '../utils/file.js';
 
 export const getAddProduct = async (req, res, next) => {
     res.render('admin/edit-product', {
@@ -135,6 +136,7 @@ export const postEditProduct = async (req, res, next) => {
             product.description = description;
             product.price = price;
             if (image) {
+                await deleteFile(product.imageUrl);
                 product.imageUrl = getImageUrl(image.filename);
             }
             await product.save();
@@ -147,8 +149,13 @@ export const postEditProduct = async (req, res, next) => {
 
 export const postDeleteProduct = async (req, res, next) => {
     try {
+        const product = await Product.findById(req.body.productId);
+        if (!product) {
+            return next(new HttpError(404, 'Could not find such product'));
+        }
         await Product.deleteOne({ _id: req.body.productId, userId: req.user._id });
         await req.user.removeFromCart(req.body.productId);
+        deleteFile(product.imageUrl);
         res.redirect('/admin/products');
     } catch (err) {
         return next(new HttpError(500, 'Delete product operation failed!'));
