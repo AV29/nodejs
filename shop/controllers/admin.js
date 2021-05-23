@@ -155,7 +155,7 @@ export const postDeleteProduct = async (req, res, next) => {
         }
         await Product.deleteOne({ _id: req.body.productId, userId: req.user._id });
         await req.user.removeFromCart(req.body.productId);
-        deleteFile(product.imageUrl);
+        await deleteFile(product.imageUrl);
         res.redirect('/admin/products');
     } catch (err) {
         return next(new HttpError(500, 'Delete product operation failed!'));
