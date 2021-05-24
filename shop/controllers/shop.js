@@ -4,10 +4,14 @@ import PDFDocument from 'pdfkit';
 import Product from '../models/product.js';
 import Order from '../models/order.js';
 import { HttpError } from '../utils/errors.js';
+import { ITEMS_PER_PAGE } from '../utils/constants.js';
 
 export const getIndex = async (req, res, next) => {
     try {
-        const products = await Product.find();
+        const page = req.query.page;
+        const products = await Product.find()
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
         res.render('shop/index', {
             pageTitle: 'Shop',
             products: products,
@@ -130,7 +134,7 @@ export const getInvoice = async (req, res, next) => {
         res.setHeader('Content-Disposition', `inline; filename="${invoiceName}"`);
         pdf.pipe(res);
 
-        pdf.fontSize(26).text('Invoice', { underline : true });
+        pdf.fontSize(26).text('Invoice', { underline: true });
         pdf.text('------------------------------');
         let totalPrice = 0;
         pdf.fontSize(14);

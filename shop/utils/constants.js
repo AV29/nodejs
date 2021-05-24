@@ -2,4 +2,5 @@ export const MONGODB_URI = `mongodb+srv://${process.env.DB_USER}:${process.env.D
 export const MONGODB_LOCAL_URI = `mongodb://127.0.0.1:27017/${process.env.DB_NAME}`;
 export const MIN_PASSWORD_LENGTH = 5;
 export const IMAGES_PATH = '/images';
+export const ITEMS_PER_PAGE = 2;
 export default MONGODB_LOCAL_URI;
