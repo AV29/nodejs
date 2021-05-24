@@ -8,13 +8,20 @@ import { ITEMS_PER_PAGE } from '../utils/constants.js';
 
 export const getIndex = async (req, res, next) => {
     try {
-        const page = req.query.page;
+        const page = parseInt(req.query.page) || 1;
+        const numberProducts = await Product.countDocuments();
         const products = await Product.find()
             .skip((page - 1) * ITEMS_PER_PAGE)
             .limit(ITEMS_PER_PAGE);
         res.render('shop/index', {
             pageTitle: 'Shop',
             products: products,
+            hasNextPage: ITEMS_PER_PAGE * page < numberProducts,
+            hasPrevPage: page > 1,
+            nextPage: page + 1,
+            prevPage: page - 1,
+            lastPage: Math.ceil(numberProducts / ITEMS_PER_PAGE),
+            currentPage: page,
             path: '/'
         });
     } catch (err) {
