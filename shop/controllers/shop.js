@@ -31,11 +31,21 @@ export const getIndex = async (req, res, next) => {
 
 export const getProducts = async (req, res, next) => {
     try {
-        const products = await Product.find();
+        const page = parseInt(req.query.page) || 1;
+        const numberProducts = await Product.countDocuments();
+        const products = await Product.find()
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
         res.render('shop/product-list', {
             pageTitle: 'All Products',
             products: products,
-            path: '/products'
+            path: '/products',
+            hasNextPage: ITEMS_PER_PAGE * page < numberProducts,
+            hasPrevPage: page > 1,
+            nextPage: page + 1,
+            prevPage: page - 1,
+            lastPage: Math.ceil(numberProducts / ITEMS_PER_PAGE),
+            currentPage: page
         });
     } catch (err) {
         return next(new HttpError(500, 'Getting products failed!'));
