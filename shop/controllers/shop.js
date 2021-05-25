@@ -163,7 +163,6 @@ export const getInvoice = async (req, res, next) => {
         pdf.fontSize(20).text(`Total Price: ${totalPrice}`);
         pdf.end();
     } catch (err) {
-        console.log(err);
         return next(new HttpError(500, 'Getting your invoice failed!'));
     }
 };
