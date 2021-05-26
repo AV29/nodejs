@@ -15,6 +15,6 @@ router.get('/edit-product/:productId', checkAuth, adminController.getEditProduct
 
 router.post('/edit-product', checkAuth, addProductValidators, adminController.postEditProduct);
 
-router.post('/delete-product', checkAuth, adminController.postDeleteProduct);
+router.delete('/product/:productId', checkAuth, adminController.deleteProduct);
 
 export default router;

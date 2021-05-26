@@ -147,17 +147,17 @@ export const postEditProduct = async (req, res, next) => {
     }
 };
 
-export const postDeleteProduct = async (req, res, next) => {
+export const deleteProduct = async (req, res, next) => {
     try {
-        const product = await Product.findById(req.body.productId);
+        const product = await Product.findById(req.params.productId);
         if (!product) {
             return next(new HttpError(404, 'Could not find such product'));
         }
-        await Product.deleteOne({ _id: req.body.productId, userId: req.user._id });
+        await Product.deleteOne({ _id: req.params.productId, userId: req.user._id });
         await req.user.removeFromCart(req.body.productId);
-        await deleteFile(product.imageUrl);
-        res.redirect('/admin/products');
+        await deleteFile(`public${product.imageUrl}`);
+        res.status(200).json({ message: 'Success' });
     } catch (err) {
-        return next(new HttpError(500, 'Delete product operation failed!'));
+        res.status(500).json({ message: 'Delete product operation failed!' });
     }
 };
