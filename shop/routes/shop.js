@@ -22,4 +22,6 @@ router.get('/orders', checkAuth, shopController.getOrders);
 
 router.get('/orders/:orderId', checkAuth, shopController.getInvoice);
 
+router.get('/checkout', checkAuth, shopController.getCheckout);
+
 export default router;

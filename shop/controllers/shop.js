@@ -166,3 +166,17 @@ export const getInvoice = async (req, res, next) => {
         return next(new HttpError(500, 'Getting your invoice failed!'));
     }
 };
+
+export const getCheckout = async (req, res, next) => {
+    try {
+        const user = await req.user.populate('cart.items.productId').execPopulate();
+        res.render('shop/checkout', {
+            pageTitle: 'Checkout',
+            path: '/checkout',
+            totalSum: user.cart.items.reduce((total, item) => total + item.productId.price * item.quantity, 0),
+            products: user.cart.items
+        });
+    } catch (err) {
+        return next(new HttpError(500, 'Getting to your checkout page failed!'));
+    }
+};
