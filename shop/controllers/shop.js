@@ -1,10 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import PDFDocument from 'pdfkit';
+import Stripe from 'stripe';
 import Product from '../models/product.js';
 import Order from '../models/order.js';
 import { HttpError } from '../utils/errors.js';
 import { ITEMS_PER_PAGE } from '../utils/constants.js';
+
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const getIndex = async (req, res, next) => {
     try {
@@ -169,14 +172,51 @@ export const getInvoice = async (req, res, next) => {
 
 export const getCheckout = async (req, res, next) => {
     try {
-        const user = await req.user.populate('cart.items.productId').execPopulate();
+        const {
+            cart: { items }
+        } = await req.user.populate('cart.items.productId').execPopulate();
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: items.map(({ productId, quantity }) => ({
+                name: productId.title,
+                description: productId.description,
+                amount: productId.price * 100,
+                currency: 'usd',
+                quantity: quantity
+            })),
+            success_url: `${req.protocol}://${req.get('host')}/checkout/success`,
+            cancel_url: `${req.protocol}://${req.get('host')}/checkout/cancel`
+        });
+
         res.render('shop/checkout', {
             pageTitle: 'Checkout',
             path: '/checkout',
-            totalSum: user.cart.items.reduce((total, item) => total + item.productId.price * item.quantity, 0),
-            products: user.cart.items
+            totalSum: items.reduce((total, item) => total + item.productId.price * item.quantity, 0),
+            products: items,
+            sessionId: session.id
         });
     } catch (err) {
+        console.log(err);
         return next(new HttpError(500, 'Getting to your checkout page failed!'));
+    }
+};
+export const getCheckoutSuccess = async (req, res, next) => {
+    try {
+        const { cart } = await req.user.populate('cart.items.productId').execPopulate();
+        const order = new Order({
+            user: {
+                email: req.user.email,
+                userId: req.user
+            },
+            products: cart.items.map(item => ({
+                quantity: item.quantity,
+                product: item.productId.toJSON()
+            }))
+        });
+        await order.save();
+        await req.user.clearCart();
+        res.redirect('/orders');
+    } catch (err) {
+        return next(new HttpError(500, 'Placing your order failed!'));
     }
 };
