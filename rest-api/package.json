@@ -1,14 +1,24 @@
 {
-  "name": "rest-api",
-  "version": "1.0.0",
-  "description": "REST API",
-  "main": "app.js",
-  "scripts": {
-    "test": "test"
-  },
-  "author": "Anton Vlasik",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1"
-  }
+    "name": "rest-api",
+    "version": "1.0.0",
+    "description": "REST API",
+    "type": "module",
+    "exports": "./app.js",
+    "node": ">=12.17",
+    "scripts": {
+        "test": "test",
+        "prestart": "prettier --write .",
+        "start": "nodemon -r dotenv/config app.js",
+        "debug": "nodemon --inspect app.js"
+    },
+    "author": "Anton Vlasik",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "express": "^4.17.1"
+    },
+    "devDependencies": {
+        "dotenv": "^10.0.0",
+        "nodemon": "^2.0.7"
+    }
 }
