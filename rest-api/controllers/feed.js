@@ -20,6 +20,14 @@ export const createPost = async (req, res, next) => {
     const content = req.body.content;
     res.status(201).json({
         message: 'Post created successfully!',
-        post: { id: new Date().toISOString(), title: title, content: content }
+        post: {
+            id: new Date().toISOString(),
+            title: title,
+            content: content,
+            createdAt: new Date(),
+            creator: {
+                name: 'Anton'
+            }
+        }
     });
 };
