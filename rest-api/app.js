@@ -1,18 +1,21 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import feedRoutes from './routes/feed.js';
+import MONGODB_URI from './utils/constants.js';
+import cors from './middlewares/cors.js';
 
 const app = express();
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
+app.use(cors);
 app.use('/feed', feedRoutes);
 
 try {
+    await mongoose.connect(MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true
+    });
     app.listen(8080);
 } catch (err) {
     console.log(err);
