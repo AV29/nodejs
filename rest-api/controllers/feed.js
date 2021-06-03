@@ -1,5 +1,7 @@
 import { validationResult } from 'express-validator';
 import Post from '../models/post.js';
+import { HttpError } from '../utils/errors.js';
+
 export const getPosts = async (req, res, next) => {
     res.status(200).json({
         posts: [
@@ -22,7 +24,7 @@ export const createPost = async (req, res, next) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(422).json({ message: 'Validation failed!', errors: errors.array() });
+            return next(new HttpError(422, 'Validation failed!'));
         }
         const title = req.body.title;
         const content = req.body.content;
@@ -41,6 +43,6 @@ export const createPost = async (req, res, next) => {
         });
     } catch (err) {
         console.log(err);
-        return res.status(500).json({ message: 'Something happened!'});
+        return next(new HttpError(500, 'Something happened on the server!'));
     }
 };
