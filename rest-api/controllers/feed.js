@@ -3,20 +3,16 @@ import Post from '../models/post.js';
 import { HttpError } from '../utils/errors.js';
 
 export const getPosts = async (req, res, next) => {
-    res.status(200).json({
-        posts: [
-            {
-                _id: '123',
-                title: 'The first post',
-                content: 'This is the first post!',
-                imageUrl: 'images/Venice.jpg',
-                createdAt: new Date(),
-                creator: {
-                    name: 'Anton'
-                }
-            }
-        ]
-    });
+    try {
+        const posts = await Post.find();
+        res.status(200).json({
+            message: 'Posts fetched!',
+            posts: posts
+        });
+    } catch (err) {
+        console.log(err);
+        return next(new HttpError(500, 'Something happened on the server!'));
+    }
 };
 
 export const createPost = async (req, res, next) => {
@@ -41,6 +37,21 @@ export const createPost = async (req, res, next) => {
             message: 'Post created successfully!',
             post: result
         });
+    } catch (err) {
+        console.log(err);
+        return next(new HttpError(500, 'Something happened on the server!'));
+    }
+};
+
+export const getPost = async (req, res, next) => {
+    try {
+        const postId = req.params.postId;
+        const post = await Post.findById(postId);
+        if (!post) {
+            return next(new HttpError(404, 'Could not find post!'));
+        }
+
+        res.status(200).json({ message: 'Post fetched!', post: post });
     } catch (err) {
         console.log(err);
         return next(new HttpError(500, 'Something happened on the server!'));

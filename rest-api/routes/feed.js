@@ -8,4 +8,6 @@ router.get('/posts', controller.getPosts);
 
 router.post('/post', createPostValidators, controller.createPost);
 
+router.get('/post/:postId', controller.getPost);
+
 export default router;
