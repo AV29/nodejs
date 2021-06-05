@@ -6,8 +6,10 @@ const router = express.Router();
 
 router.get('/posts', controller.getPosts);
 
+router.get('/post/:postId', controller.getPost);
+
 router.post('/post', createPostValidators, controller.createPost);
 
-router.get('/post/:postId', controller.getPost);
+router.put('/post/:postId', createPostValidators, controller.updatePost);
 
 export default router;

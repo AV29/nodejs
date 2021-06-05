@@ -1,6 +1,6 @@
-import { validationResult } from 'express-validator';
 import Post from '../models/post.js';
-import { HttpError } from '../utils/errors.js';
+import { HttpError, handleValidationErrors } from '../utils/errors.js';
+import { deleteFile } from '../utils/file.js';
 
 export const getPosts = async (req, res, next) => {
     try {
@@ -17,10 +17,7 @@ export const getPosts = async (req, res, next) => {
 
 export const createPost = async (req, res, next) => {
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return next(new HttpError(422, `Validation failed! ${errors.array()[0].msg}`));
-        }
+        handleValidationErrors(req);
         if (!req.file) {
             return next(new HttpError(422, 'No image provided!'));
         }
@@ -42,6 +39,49 @@ export const createPost = async (req, res, next) => {
         });
     } catch (err) {
         console.log(err);
+        if(err instanceof HttpError) {
+            return next(err);
+        }
+        return next(new HttpError(500, 'Something happened on the server!'));
+    }
+};
+
+export const updatePost = async (req, res, next) => {
+    try {
+        handleValidationErrors(req);
+
+        const postId = req.params.postId;
+        const title = req.body.title;
+        const content = req.body.content;
+        let imageUrl = req.body.image;
+        if (req.file) {
+            imageUrl = req.file.path;
+        }
+        if(!imageUrl) {
+            return next(new HttpError(422, 'No image provided!'));
+        }
+
+        const post = await Post.findById(postId);
+        if(!post) {
+            return next(new HttpError(404, 'No post found!'));
+        }
+        if(imageUrl !== post.imageUrl) {
+            await deleteFile(post.imageUrl);
+        }
+        post.title = title;
+        post.content = content;
+        post.imageUrl = imageUrl;
+
+        const result = await post.save();
+        res.status(201).json({
+            message: 'Post updated successfully!',
+            post: result
+        });
+    } catch (err) {
+        console.log(err);
+        if(err instanceof HttpError) {
+            return next(err);
+        }
         return next(new HttpError(500, 'Something happened on the server!'));
     }
 };
