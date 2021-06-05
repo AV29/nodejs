@@ -12,4 +12,6 @@ router.post('/post', createPostValidators, controller.createPost);
 
 router.put('/post/:postId', createPostValidators, controller.updatePost);
 
+router.delete('/post/:postId', controller.deletePost);
+
 export default router;

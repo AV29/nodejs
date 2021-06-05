@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 
-const MIN_TITLE_LENGTH = 7;
+const MIN_TITLE_LENGTH = 5;
 const MIN_CONTENT_LENGTH = 5;
 
 export const createPostValidators = [

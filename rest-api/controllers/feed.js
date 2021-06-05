@@ -15,6 +15,21 @@ export const getPosts = async (req, res, next) => {
     }
 };
 
+export const getPost = async (req, res, next) => {
+    try {
+        const postId = req.params.postId;
+        const post = await Post.findById(postId);
+        if (!post) {
+            return next(new HttpError(404, 'Could not find post!'));
+        }
+
+        res.status(200).json({ message: 'Post fetched!', post: post });
+    } catch (err) {
+        console.log(err);
+        return next(new HttpError(500, 'Something happened on the server!'));
+    }
+};
+
 export const createPost = async (req, res, next) => {
     try {
         handleValidationErrors(req);
@@ -39,7 +54,7 @@ export const createPost = async (req, res, next) => {
         });
     } catch (err) {
         console.log(err);
-        if(err instanceof HttpError) {
+        if (err instanceof HttpError) {
             return next(err);
         }
         return next(new HttpError(500, 'Something happened on the server!'));
@@ -57,15 +72,15 @@ export const updatePost = async (req, res, next) => {
         if (req.file) {
             imageUrl = req.file.path;
         }
-        if(!imageUrl) {
+        if (!imageUrl) {
             return next(new HttpError(422, 'No image provided!'));
         }
 
         const post = await Post.findById(postId);
-        if(!post) {
+        if (!post) {
             return next(new HttpError(404, 'No post found!'));
         }
-        if(imageUrl !== post.imageUrl) {
+        if (imageUrl !== post.imageUrl) {
             await deleteFile(post.imageUrl);
         }
         post.title = title;
@@ -79,22 +94,23 @@ export const updatePost = async (req, res, next) => {
         });
     } catch (err) {
         console.log(err);
-        if(err instanceof HttpError) {
+        if (err instanceof HttpError) {
             return next(err);
         }
         return next(new HttpError(500, 'Something happened on the server!'));
     }
 };
 
-export const getPost = async (req, res, next) => {
+export const deletePost = async (req, res, next) => {
     try {
         const postId = req.params.postId;
         const post = await Post.findById(postId);
         if (!post) {
             return next(new HttpError(404, 'Could not find post!'));
         }
-
-        res.status(200).json({ message: 'Post fetched!', post: post });
+        await deleteFile(post.imageUrl);
+        await Post.deleteOne({ _id: postId });
+        res.status(200).json({ message: 'Post deleted!' });
     } catch (err) {
         console.log(err);
         return next(new HttpError(500, 'Something happened on the server!'));

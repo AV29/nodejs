@@ -59,9 +59,9 @@ class Feed extends Component {
       })
       .then((resData) => {
         this.setState({
-          posts: resData.posts.map(post => ({
+          posts: resData.posts.map((post) => ({
             ...post,
-            imagePath: post.imageUrl
+            imagePath: post.imageUrl,
           })),
           totalPosts: resData.totalItems,
           postsLoading: false,
@@ -110,19 +110,19 @@ class Feed extends Component {
     });
     // Set up data (with image!)
     const formData = new FormData();
-    formData.append('title', postData.title);
-    formData.append('content', postData.content);
-    formData.append('image', postData.image);
+    formData.append("title", postData.title);
+    formData.append("content", postData.content);
+    formData.append("image", postData.image);
 
     let url = "http://localhost:8080/feed/post";
     let method = "POST";
     if (this.state.editPost) {
       url = `${url}/${this.state.editPost._id}`;
-      method = 'PUT'
+      method = "PUT";
     }
     fetch(url, {
       method: method,
-      body: formData
+      body: formData,
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
@@ -174,7 +174,7 @@ class Feed extends Component {
 
   deletePostHandler = (postId) => {
     this.setState({ postsLoading: true });
-    fetch("URL")
+    fetch(`http://localhost:8080/feed/post/${postId}`, { method: "DELETE" })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Deleting a post failed!");
