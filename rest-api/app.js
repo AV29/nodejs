@@ -7,10 +7,12 @@ import feedRoutes from './routes/feed.js';
 import MONGODB_URI from './utils/constants.js';
 import cors from './middlewares/cors.js';
 import handleAllErrors from './middlewares/error.js';
+import imageUpload from './middlewares/imageUpload.js';
 
 const rootPath = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(bodyParser.json());
+app.use(imageUpload);
 app.use('/images', express.static(path.join(rootPath, 'images')));
 app.use(cors);
 app.use('/feed', feedRoutes);

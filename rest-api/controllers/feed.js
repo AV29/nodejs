@@ -22,12 +22,16 @@ export const createPost = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return next(new HttpError(422, 'Validation failed!'));
         }
+        if (!req.file) {
+            return next(new HttpError(422, 'No image provided!'));
+        }
+        const imageUrl = req.file.path;
         const title = req.body.title;
         const content = req.body.content;
         const post = new Post({
             title: title,
             content: content,
-            imageUrl: 'images/Venice.jpg',
+            imageUrl: imageUrl,
             creator: {
                 name: 'Anton'
             }
