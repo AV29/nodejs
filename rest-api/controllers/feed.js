@@ -18,9 +18,8 @@ export const getPosts = async (req, res, next) => {
 export const createPost = async (req, res, next) => {
     try {
         const errors = validationResult(req);
-
         if (!errors.isEmpty()) {
-            return next(new HttpError(422, 'Validation failed!'));
+            return next(new HttpError(422, `Validation failed! ${errors.array()[0].msg}`));
         }
         if (!req.file) {
             return next(new HttpError(422, 'No image provided!'));
