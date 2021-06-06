@@ -4,10 +4,16 @@ import { deleteFile } from '../utils/file.js';
 
 export const getPosts = async (req, res, next) => {
     try {
-        const posts = await Post.find();
+        const page = req.query.page || 1;
+        const perPage = 2;
+        const totalItems = await Post.countDocuments();
+        const posts = await Post.find()
+            .skip((page - 1) * perPage)
+            .limit(perPage);
         res.status(200).json({
             message: 'Posts fetched!',
-            posts: posts
+            posts: posts,
+            totalItems: totalItems
         });
     } catch (err) {
         console.log(err);
