@@ -9,7 +9,8 @@ export const signup = async (req, res, next) => {
 
         handleValidationErrors(req);
 
-        
+        const result = await User.signup(email, password, name);
+        res.status(201).json({ message: 'User created!', userId: result._id });
     } catch (err) {
         console.log(err);
         if (err instanceof HttpError) {
@@ -18,6 +19,3 @@ export const signup = async (req, res, next) => {
         return next(new HttpError(500, 'Something happened on the server!'));
     }
 };
-
-
-

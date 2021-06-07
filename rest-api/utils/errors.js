@@ -24,4 +24,4 @@ export const handleValidationErrors = req => {
     if (!errors.isEmpty()) {
         throw new HttpError(422, `Validation failed! ${errors.array()[0].msg}`);
     }
-}
+};

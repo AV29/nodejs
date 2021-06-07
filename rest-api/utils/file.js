@@ -9,5 +9,3 @@ export const deleteFile = async filePath => {
         throw new HttpError(500, err.message);
     }
 };
-
-
