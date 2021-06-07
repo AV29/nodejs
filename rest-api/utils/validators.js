@@ -22,7 +22,6 @@ export const authValidators = [
         .isEmail()
         .withMessage(`Invalid email is entered`)
         .custom(async (value, { req }) => {
-            console.log(value);
             const existingUser = await User.findOne({ email: value });
             if (existingUser) throw new HttpError(401, 'This email is already taken!');
             else return true;
