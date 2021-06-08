@@ -53,7 +53,7 @@ userSchema.statics.login = async function (email, password) {
             throw new HttpError(401, 'Password is incorrect!');
         }
     } else {
-        throw new HttpError(404, `We could not find ${email} user`);
+        throw new HttpError(401, `We could not find ${email} user`);
     }
 };
 

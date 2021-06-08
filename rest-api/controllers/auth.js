@@ -27,7 +27,7 @@ export const login = async (req, res, next) => {
 
         handleValidationErrors(req);
 
-        const result = await User.login(email, password);
+        const user = await User.login(email, password);
         res.status(201).json({ message: 'User logged in!', userId: result._id });
     } catch (err) {
         console.log(err);
