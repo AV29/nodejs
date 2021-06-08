@@ -17,7 +17,7 @@ export const createPostValidators = [
         .withMessage(`Content length should be minimum ${MIN_CONTENT_LENGTH} characters`)
 ];
 
-export const authValidators = [
+export const signupValidators = [
     body('email')
         .isEmail()
         .withMessage(`Invalid email is entered`)
@@ -27,6 +27,16 @@ export const authValidators = [
             else return true;
         })
         .normalizeEmail(),
+    body('password')
+        .trim()
+        .isLength({ min: MIN_PASSWORD_LENGTH })
+        .withMessage(`Password length should be minimum ${MIN_PASSWORD_LENGTH} characters`)
+];
+
+export const loginValidators = [
+    body('email')
+        .isEmail()
+        .withMessage(`Invalid email is entered`),
     body('password')
         .trim()
         .isLength({ min: MIN_PASSWORD_LENGTH })
