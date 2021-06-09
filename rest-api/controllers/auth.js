@@ -27,8 +27,8 @@ export const login = async (req, res, next) => {
 
         handleValidationErrors(req);
 
-        const user = await User.login(email, password);
-        res.status(201).json({ message: 'User logged in!', userId: result._id });
+        const result = await User.login(email, password);
+        res.status(201).json({ message: 'User logged in!', token: result.token, userId: result.userId });
     } catch (err) {
         console.log(err);
         if (err instanceof HttpError) {

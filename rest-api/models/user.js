@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { HttpError } from '../../shop/utils/errors.js';
 
 const Schema = mongoose.Schema;
@@ -48,7 +49,14 @@ userSchema.statics.login = async function (email, password) {
     if (user) {
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (isPasswordCorrect) {
-            return user;
+            const userId = user._id.toString();
+            const token = jwt.sign({ email: user.email, userId: userId }, process.env.JWT_SECRET, {
+                expiresIn: '1h'
+            });
+            return {
+                token: token,
+                userId: userId
+            };
         } else {
             throw new HttpError(401, 'Password is incorrect!');
         }

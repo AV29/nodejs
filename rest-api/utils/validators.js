@@ -34,9 +34,7 @@ export const signupValidators = [
 ];
 
 export const loginValidators = [
-    body('email')
-        .isEmail()
-        .withMessage(`Invalid email is entered`),
+    body('email').isEmail().withMessage(`Invalid email is entered`),
     body('password')
         .trim()
         .isLength({ min: MIN_PASSWORD_LENGTH })
