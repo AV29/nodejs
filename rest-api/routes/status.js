@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.get('/', checkAuth, controller.getStatus);
 
+router.patch('/', checkAuth, controller.updateStatus);
+
 export default router;
