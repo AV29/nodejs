@@ -1,10 +1,11 @@
 import express from 'express';
 import * as controller from '../controllers/feed.js';
+import checkAuth from '../middlewares/checkAuth.js';
 import { createPostValidators } from '../utils/validators.js';
 
 const router = express.Router();
 
-router.get('/posts', controller.getPosts);
+router.get('/posts', checkAuth, controller.getPosts);
 
 router.get('/post/:postId', controller.getPost);
 
