@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import feedRoutes from './routes/feed.js';
 import authRoutes from './routes/auth.js';
+import statusRoutes from './routes/status.js';
 import MONGODB_URI from './utils/constants.js';
 import cors from './middlewares/cors.js';
 import handleAllErrors from './middlewares/error.js';
@@ -18,6 +19,7 @@ app.use('/images', express.static(path.join(rootPath, 'images')));
 app.use(cors);
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
+app.use('/status', statusRoutes);
 app.use(handleAllErrors);
 
 try {
