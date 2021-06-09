@@ -40,3 +40,8 @@ export const loginValidators = [
         .isLength({ min: MIN_PASSWORD_LENGTH })
         .withMessage(`Password length should be minimum ${MIN_PASSWORD_LENGTH} characters`)
 ];
+
+
+export const userStatusValidators = [
+    body('status').trim().not().isEmpty().withMessage('Status cannot be empty')
+];
