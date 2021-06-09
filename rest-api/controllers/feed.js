@@ -1,4 +1,5 @@
 import Post from '../models/post.js';
+import User from '../models/user.js';
 import { HttpError, handleValidationErrors } from '../utils/errors.js';
 import { deleteFile } from '../utils/file.js';
 
@@ -49,14 +50,22 @@ export const createPost = async (req, res, next) => {
             title: title,
             content: content,
             imageUrl: imageUrl,
-            creator: {
-                name: 'Anton'
-            }
+            creator: req.userId
         });
-        const result = await post.save();
+        const savedPost = await post.save();
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return next(new HttpError(404, 'No user found!'));
+        }
+        user.posts.push(post);
+        await user.save();
         res.status(201).json({
             message: 'Post created successfully!',
-            post: result
+            post: savedPost,
+            creator: {
+                _id: user._id,
+                name: user.name
+            }
         });
     } catch (err) {
         console.log(err);
