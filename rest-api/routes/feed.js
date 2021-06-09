@@ -7,12 +7,12 @@ const router = express.Router();
 
 router.get('/posts', checkAuth, controller.getPosts);
 
-router.get('/post/:postId', controller.getPost);
+router.get('/post/:postId', checkAuth, controller.getPost);
 
-router.post('/post', createPostValidators, controller.createPost);
+router.post('/post', checkAuth, createPostValidators, controller.createPost);
 
-router.put('/post/:postId', createPostValidators, controller.updatePost);
+router.put('/post/:postId', checkAuth, createPostValidators, controller.updatePost);
 
-router.delete('/post/:postId', controller.deletePost);
+router.delete('/post/:postId', checkAuth, controller.deletePost);
 
 export default router;

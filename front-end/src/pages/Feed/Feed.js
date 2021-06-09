@@ -52,8 +52,8 @@ class Feed extends Component {
     }
     fetch(`http://localhost:8080/feed/posts?page=${page}`, {
       headers: {
-        Authorization: `Bearer ${this.props.token}`
-      }
+        Authorization: `Bearer ${this.props.token}`,
+      },
     })
       .then((res) => {
         if (res.status !== 200) {
@@ -125,6 +125,9 @@ class Feed extends Component {
       method = "PUT";
     }
     fetch(url, {
+      headers: {
+        Authorization: `Bearer ${this.props.token}`,
+      },
       method: method,
       body: formData,
     })
@@ -178,7 +181,12 @@ class Feed extends Component {
 
   deletePostHandler = (postId) => {
     this.setState({ postsLoading: true });
-    fetch(`http://localhost:8080/feed/post/${postId}`, { method: "DELETE" })
+    fetch(`http://localhost:8080/feed/post/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${this.props.token}`,
+      },
+      method: "DELETE",
+    })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error("Deleting a post failed!");
