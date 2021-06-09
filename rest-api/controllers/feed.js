@@ -131,6 +131,12 @@ export const deletePost = async (req, res, next) => {
         }
         await deleteFile(post.imageUrl);
         await Post.deleteOne({ _id: postId });
+        const user = await User.findById(req.userId);
+        if(!user) {
+            return next(new HttpError(404, 'Could not find user!'));
+        }
+        user.posts.pull(postId);
+        await user.save();
         res.status(200).json({ message: 'Post deleted!' });
     } catch (err) {
         console.log(err);
