@@ -32,7 +32,7 @@ try {
     const server = app.listen(8080);
     const io = new Server(server);
     io.on('connection', socket => {
-        console.log('Client connected!');
+        console.log('Client connected!!');
     });
 } catch (err) {
     console.log(err);
