@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { Server } from 'socket.io';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
@@ -28,7 +29,11 @@ try {
         useUnifiedTopology: true,
         useCreateIndex: true
     });
-    app.listen(8080);
+    const server = app.listen(8080);
+    const io = new Server(server);
+    io.on('connection', socket => {
+        console.log('Client connected!');
+    });
 } catch (err) {
     console.log(err);
 }
