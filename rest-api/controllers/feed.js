@@ -25,7 +25,7 @@ export const getPosts = async (req, res, next) => {
 export const getPost = async (req, res, next) => {
     try {
         const postId = req.params.postId;
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId).exec();
         if (!post) {
             return next(new HttpError(404, 'Could not find post!'));
         }
@@ -95,7 +95,7 @@ export const updatePost = async (req, res, next) => {
         if (!post) {
             return next(new HttpError(404, 'No post found!'));
         }
-        if(post.creator.toString() !== req.userId) {
+        if (post.creator.toString() !== req.userId) {
             return next(new HttpError(403, `Not authorized! ${req.userId} is not owner of this post`));
         }
         if (imageUrl !== post.imageUrl) {
@@ -126,13 +126,13 @@ export const deletePost = async (req, res, next) => {
         if (!post) {
             return next(new HttpError(404, 'Could not find post!'));
         }
-        if(post.creator.toString() !== req.userId) {
+        if (post.creator.toString() !== req.userId) {
             return next(new HttpError(403, `Not authorized! ${req.userId} is not owner of this post`));
         }
         await deleteFile(post.imageUrl);
         await Post.deleteOne({ _id: postId });
         const user = await User.findById(req.userId);
-        if(!user) {
+        if (!user) {
             return next(new HttpError(404, 'Could not find user!'));
         }
         user.posts.pull(postId);
