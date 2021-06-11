@@ -1,5 +1,6 @@
 import Post from '../models/post.js';
 import User from '../models/user.js';
+import socket from '../socket.js';
 import { HttpError, handleValidationErrors } from '../utils/errors.js';
 import { deleteFile } from '../utils/file.js';
 
@@ -59,6 +60,7 @@ export const createPost = async (req, res, next) => {
         }
         user.posts.push(post);
         await user.save();
+        socket.getIO().emit('posts', { action: 'create', post: post });
         res.status(201).json({
             message: 'Post created successfully!',
             post: savedPost,

@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Server } from 'socket.io';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import socket from './socket.js';
 import feedRoutes from './routes/feed.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
@@ -30,7 +30,7 @@ try {
         useCreateIndex: true
     });
     const server = app.listen(8080);
-    const io = new Server(server);
+    const io = socket.init(server);
     io.on('connection', socket => {
         console.log('Client connected!!');
     });
