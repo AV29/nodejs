@@ -94,7 +94,7 @@ export const updatePost = async (req, res, next) => {
             return next(new HttpError(422, 'No image provided!'));
         }
 
-        const post = await Post.findById(postId);
+        const post = await Post.findById(postId).populate('creator');
         if (!post) {
             return next(new HttpError(404, 'No post found!'));
         }
@@ -109,6 +109,7 @@ export const updatePost = async (req, res, next) => {
         post.imageUrl = imageUrl;
 
         const result = await post.save();
+        socket.getIO().emit('posts', { action: 'update', post: result.toJSON() });
         res.status(201).json({
             message: 'Post updated successfully!',
             post: result
