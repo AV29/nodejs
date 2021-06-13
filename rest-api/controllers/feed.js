@@ -10,6 +10,7 @@ export const getPosts = async (req, res, next) => {
         const perPage = 2;
         const totalItems = await Post.countDocuments();
         const posts = await Post.find()
+            .populate('creator')
             .skip((page - 1) * perPage)
             .limit(perPage);
         res.status(200).json({
@@ -60,7 +61,7 @@ export const createPost = async (req, res, next) => {
         }
         user.posts.push(post);
         await user.save();
-        socket.getIO().emit('posts', { action: 'create', post: post });
+        socket.getIO().emit('posts', { action: 'create', post: post.toJSON() });
         res.status(201).json({
             message: 'Post created successfully!',
             post: savedPost,
