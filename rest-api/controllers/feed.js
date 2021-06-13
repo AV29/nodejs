@@ -11,6 +11,7 @@ export const getPosts = async (req, res, next) => {
         const totalItems = await Post.countDocuments();
         const posts = await Post.find()
             .populate('creator')
+            .sort({ createdAt: -1 })
             .skip((page - 1) * perPage)
             .limit(perPage);
         res.status(200).json({
@@ -98,7 +99,7 @@ export const updatePost = async (req, res, next) => {
         if (!post) {
             return next(new HttpError(404, 'No post found!'));
         }
-        if (post.creator.toString() !== req.userId) {
+        if (post.creator._id.toString() !== req.userId) {
             return next(new HttpError(403, `Not authorized! ${req.userId} is not owner of this post`));
         }
         if (imageUrl !== post.imageUrl) {
