@@ -1,5 +1,6 @@
 import Post from '../models/post.js';
 import User from '../models/user.js';
+import socket from '../socket.js';
 import { HttpError, handleValidationErrors } from '../utils/errors.js';
 import { deleteFile } from '../utils/file.js';
 
@@ -61,6 +62,7 @@ export const createPost = async (req, res, next) => {
         }
         user.posts.push(post);
         await user.save();
+        socket.getIO().emit('posts', { action: 'create', post: post.toJSON() });
         res.status(201).json({
             message: 'Post created successfully!',
             post: savedPost,
@@ -108,6 +110,7 @@ export const updatePost = async (req, res, next) => {
         post.imageUrl = imageUrl;
 
         const result = await post.save();
+        socket.getIO().emit('posts', { action: 'update', post: result.toJSON() });
         res.status(201).json({
             message: 'Post updated successfully!',
             post: result
@@ -139,6 +142,7 @@ export const deletePost = async (req, res, next) => {
         }
         user.posts.pull(postId);
         await user.save();
+        socket.getIO().emit('posts', { action: 'delete', post: postId});
         res.status(200).json({ message: 'Post deleted!' });
     } catch (err) {
         console.log(err);

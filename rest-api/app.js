@@ -3,6 +3,10 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import socket from './socket.js';
+import feedRoutes from './routes/feed.js';
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/user.js';
 import MONGODB_URI from './utils/constants.js';
 import cors from './middlewares/cors.js';
 import handleAllErrors from './middlewares/error.js';
@@ -14,6 +18,9 @@ app.use(bodyParser.json());
 app.use(imageUpload);
 app.use('/images', express.static(path.join(rootPath, 'images')));
 app.use(cors);
+app.use('/feed', feedRoutes);
+app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 app.use(handleAllErrors);
 
 try {
@@ -22,7 +29,11 @@ try {
         useUnifiedTopology: true,
         useCreateIndex: true
     });
-    app.listen(8080);
+    const server = app.listen(8080);
+    const io = socket.init(server);
+    io.on('connection', socket => {
+        console.log('Client connected!!');
+    });
 } catch (err) {
     console.log(err);
 }
