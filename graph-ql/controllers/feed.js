@@ -1,6 +1,6 @@
 import Post from '../models/post.js';
 import User from '../models/user.js';
-import { HttpError, handleValidationErrors } from '../utils/errors.js';
+import { HttpError } from '../utils/errors.js';
 import { deleteFile } from '../utils/file.js';
 
 export const getPosts = async (req, res, next) => {
@@ -41,7 +41,6 @@ export const getPost = async (req, res, next) => {
 
 export const createPost = async (req, res, next) => {
     try {
-        handleValidationErrors(req);
         if (!req.file) {
             return next(new HttpError(422, 'No image provided!'));
         }
@@ -80,8 +79,6 @@ export const createPost = async (req, res, next) => {
 
 export const updatePost = async (req, res, next) => {
     try {
-        handleValidationErrors(req);
-
         const postId = req.params.postId;
         const title = req.body.title;
         const content = req.body.content;

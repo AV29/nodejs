@@ -1,5 +1,4 @@
 import http from 'node:http';
-import { validationResult } from 'express-validator';
 
 export class HttpError extends Error {
     constructor(status, message) {
@@ -18,10 +17,3 @@ export class AuthError extends Error {
         Error.captureStackTrace(this, AuthError);
     }
 }
-
-export const handleValidationErrors = req => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        throw new HttpError(422, `Validation failed! ${errors.array()[0].msg}`);
-    }
-};
