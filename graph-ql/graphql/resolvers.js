@@ -40,7 +40,7 @@ export default {
     },
 
     login: async function({ email, password }, req) {
-        const user = await this.findOne({ email: email });
+        const user = await User.findOne({ email: email });
         if (user) {
             const isPasswordCorrect = await bcrypt.compare(password, user.password);
             if (isPasswordCorrect) {
