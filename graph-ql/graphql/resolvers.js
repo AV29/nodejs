@@ -62,6 +62,10 @@ export default {
     },
 
     createPost: async function ({ postInput: { title, content, imageUrl } }, req) {
+        if (!req.isAuth) {
+            throw new HttpError(401, 'User is not authenticated');
+        }
+
         const errors = [];
 
         if (validator.isEmpty(title) || !validator.isLength(title, { min: 5 })) {
@@ -74,14 +78,21 @@ export default {
         if (errors.length > 0) {
             throw new HttpError(422, 'Invalid input');
         }
+
+        const user = User.findById(req.userId);
+        if (!user) {
+            throw new HttpError(401, 'Invalid user');
+        }
         const post = new Post({
             title: title,
             content: content,
-            imageUrl: imageUrl
+            imageUrl: imageUrl,
+            creator: user
         });
 
         const createdPost = await post.save();
-
+        user.posts.push(createdPost);
+        await user.save();
         return {
             ...createdPost.toJSON(),
             _id: createdPost._id.toString(),

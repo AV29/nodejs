@@ -7,6 +7,7 @@ import MONGODB_URI from './utils/constants.js';
 import cors from './middlewares/cors.js';
 import handleAllErrors from './middlewares/error.js';
 import imageUpload from './middlewares/imageUpload.js';
+import checkAuth from './middlewares/checkAuth.js';
 import graphql from './middlewares/graphql.js';
 
 const rootPath = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use(imageUpload);
 app.use('/images', express.static(path.join(rootPath, 'images')));
 app.use(cors);
+app.use(checkAuth);
 app.use('/graphql', graphql);
 app.use(handleAllErrors);
 
