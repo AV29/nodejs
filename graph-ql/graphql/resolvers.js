@@ -1,5 +1,6 @@
 import validator from 'validator';
 import User from '../models/user.js';
+import Post from '../models/post.js';
 import { HttpError } from '../utils/errors.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -39,7 +40,7 @@ export default {
         };
     },
 
-    login: async function({ email, password }, req) {
+    login: async function ({ email, password }, req) {
         const user = await User.findOne({ email: email });
         if (user) {
             const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -58,5 +59,34 @@ export default {
         } else {
             throw new HttpError(401, `We could not find ${email} user`);
         }
+    },
+
+    createPost: async function ({ postInput: { title, content, imageUrl } }, req) {
+        const errors = [];
+
+        if (validator.isEmpty(title) || !validator.isLength(title, { min: 5 })) {
+            errors.push({ message: 'Title is invalid' });
+        }
+
+        if (validator.isEmpty(content) || !validator.isLength(content, { min: 5 })) {
+            errors.push({ message: 'Content is invalid' });
+        }
+        if (errors.length > 0) {
+            throw new HttpError(422, 'Invalid input');
+        }
+        const post = new Post({
+            title: title,
+            content: content,
+            imageUrl: imageUrl
+        });
+
+        const createdPost = await post.save();
+
+        return {
+            ...createdPost.toJSON(),
+            _id: createdPost._id.toString(),
+            createdAt: createdPost.createdAt.toISOString(),
+            updatedAt: createdPost.updatedAt.toISOString()
+        };
     }
 };
