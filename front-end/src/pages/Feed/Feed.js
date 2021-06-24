@@ -71,15 +71,15 @@ class Feed extends Component {
             }
           }
         }
-      `
+      `,
     };
     fetch(`http://localhost:8080/graphql`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${this.props.token}`,
-        "Content-type": "application/json"
+        "Content-type": "application/json",
       },
-      body: JSON.stringify(graphqlQuery)
+      body: JSON.stringify(graphqlQuery),
     })
       .then((res) => {
         return res.json();
@@ -176,9 +176,7 @@ class Feed extends Component {
       })
       .then((resData) => {
         if (resData.errors && resData.errors[0].status === 422) {
-          throw new Error(
-            "Validation failed!"
-          );
+          throw new Error("Validation failed!");
         }
         if (resData.errors) {
           console.log("Error!");
@@ -192,8 +190,19 @@ class Feed extends Component {
           creator: resData.data.createPost.creator,
           createdAt: resData.data.createPost.createdAt,
         };
-        this.setState(() => {
+        this.setState((prevState) => {
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPost) {
+            const postIndex = prevState.posts.findIndex(
+              (p) => p._id === prevState.editPost._id
+            );
+            updatedPosts[postIndex] = post;
+          } else {
+            updatedPosts.unshift(post);
+          }
+
           return {
+            posts: updatedPosts,
             isEditing: false,
             editPost: null,
             editLoading: false,
