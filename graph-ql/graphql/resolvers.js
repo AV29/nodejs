@@ -34,10 +34,7 @@ export default {
 
         const createdUser = await user.save();
 
-        return {
-            ...createdUser.toJSON(),
-            _id: createdUser._id.toString()
-        };
+        return createdUser.toJSON();
     },
 
     login: async function ({ email, password }, req) {
@@ -79,10 +76,12 @@ export default {
             throw new HttpError(422, 'Invalid input');
         }
 
-        const user = User.findById(req.userId);
+        const user = await User.findById(req.userId);
+
         if (!user) {
             throw new HttpError(401, 'Invalid user');
         }
+
         const post = new Post({
             title: title,
             content: content,
@@ -93,11 +92,7 @@ export default {
         const createdPost = await post.save();
         user.posts.push(createdPost);
         await user.save();
-        return {
-            ...createdPost.toJSON(),
-            _id: createdPost._id.toString(),
-            createdAt: createdPost.createdAt.toISOString(),
-            updatedAt: createdPost.updatedAt.toISOString()
-        };
+
+        return createdPost.toJSON();
     }
 };

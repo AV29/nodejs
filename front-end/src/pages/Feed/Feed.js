@@ -124,34 +124,30 @@ class Feed extends Component {
     this.setState({
       editLoading: true,
     });
-    // Set up data (with image!)
-    const formData = new FormData();
-    formData.append("title", postData.title);
-    formData.append("content", postData.content);
-    formData.append("image", postData.image);
-
-    let graphqlQuery = `
-      mutation {
+    let graphqlQuery = {
+      query: `
+       mutation {
         createPost(postInput: { title: "${postData.title}", content: "${postData.content}", imageUrl: "qweqweqwe"}) {
          _id 
          title
          content
          imageUrl
          creator {
-            name
+           name
          }
          createdAt 
         }
       }
-    `;
+      `,
+    };
 
-    fetch('http://localhost:8080/graphql', {
+    fetch("http://localhost:8080/graphql", {
+      method: "POST",
+      body: JSON.stringify(graphqlQuery),
       headers: {
         Authorization: `Bearer ${this.props.token}`,
-        "Content-Type": "application/json"
+        "Content-type": "application/json",
       },
-      method: 'POST',
-      body: JSON.stringify(graphqlQuery),
     })
       .then((res) => {
         return res.json();
@@ -159,20 +155,20 @@ class Feed extends Component {
       .then((resData) => {
         if (resData.errors && resData.errors[0].status === 422) {
           throw new Error(
-              "Validation failed. Make sure the email address isn't used yet!"
+            "Validation failed!"
           );
         }
         if (resData.errors) {
           console.log("Error!");
-          throw new Error("Logging in failed!");
+          throw new Error("Creating post failed!");
         }
         console.log(resData);
         const post = {
-          _id: resData.post._id,
-          title: resData.post.title,
-          content: resData.post.content,
-          creator: resData.post.creator,
-          createdAt: resData.post.createdAt
+          _id: resData.data.createPost._id,
+          title: resData.data.createPost.title,
+          content: resData.data.createPost.content,
+          creator: resData.data.createPost.creator,
+          createdAt: resData.data.createPost.createdAt,
         };
         this.setState(() => {
           return {
@@ -214,7 +210,6 @@ class Feed extends Component {
       .then((resData) => {
         console.log(resData);
         this.loadPosts();
-
       })
       .catch((err) => {
         console.log(err);
