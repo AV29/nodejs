@@ -94,5 +94,19 @@ export default {
         await user.save();
 
         return createdPost.toJSON();
+    },
+
+    posts: async function (args, req) {
+        // if (!req.isAuth) {
+        //     throw new HttpError(401, 'User is not authenticated');
+        // }
+
+        const totalPosts = await Post.find().countDocuments();
+        const posts = await Post.find().sort({ createdAt: -1 }).populate('creator');
+
+        return {
+            totalPosts: totalPosts,
+            posts: posts.map(post => post.toJSON())
+        };
     }
 };
