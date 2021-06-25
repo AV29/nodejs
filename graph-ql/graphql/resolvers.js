@@ -96,13 +96,20 @@ export default {
         return createdPost.toJSON();
     },
 
-    posts: async function (args, req) {
-        // if (!req.isAuth) {
-        //     throw new HttpError(401, 'User is not authenticated');
-        // }
-
+    posts: async function ({ page }, req) {
+        if (!req.isAuth) {
+            throw new HttpError(401, 'User is not authenticated');
+        }
+        if (!page) {
+            page = 1;
+        }
+        const perPage = 2;
         const totalPosts = await Post.find().countDocuments();
-        const posts = await Post.find().sort({ createdAt: -1 }).populate('creator');
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * perPage)
+            .limit(perPage)
+            .populate('creator');
 
         return {
             totalPosts: totalPosts,
