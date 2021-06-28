@@ -115,5 +115,18 @@ export default {
             totalPosts: totalPosts,
             posts: posts.map(post => post.toJSON())
         };
+    },
+
+    post: async function ({ id }, req) {
+        if (!req.isAuth) {
+            throw new HttpError(401, 'User is not authenticated');
+        }
+
+        const post = await Post.findById(id).populate('creator');
+        if(!post) {
+            throw new HttpError(404, 'Post was not found');
+        }
+
+        return post.toJSON();
     }
 };
