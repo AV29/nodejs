@@ -128,5 +128,46 @@ export default {
         }
 
         return { ...post.toJSON(), createdAt: post.createdAt.toISOString() };
+    },
+
+    updatePost: async function ({ id, postInput }, req) {
+        if (!req.isAuth) {
+            throw new HttpError(401, 'User is not authenticated');
+        }
+
+        const post = await Post.findById(id).populate('creator');
+        if (!post) {
+            throw new HttpError(404, 'Post was not found');
+        }
+
+        if (!post.creator._id.toString() === req.userId.toString()) {
+            throw new HttpError(403, 'Not authorized!');
+        }
+
+        const errors = [];
+
+        if (validator.isEmpty(title) || !validator.isLength(title, { min: 5 })) {
+            errors.push({ message: 'Title is invalid' });
+        }
+
+        if (validator.isEmpty(content) || !validator.isLength(content, { min: 5 })) {
+            errors.push({ message: 'Content is invalid' });
+        }
+        if (errors.length > 0) {
+            throw new HttpError(422, 'Invalid input');
+        }
+
+        post.title = postInput.title;
+        post.content = postInput.content;
+        if (postImage.imageUrl !== 'undefined') {
+            post.imageUrl = postInput.imageUrl;
+        }
+
+        const updatedPost = await post.save();
+        return {
+            ...updatedPost.toJSON(),
+            createdAt: updatedPost.createdAt.toISOString(),
+            updatedAt: updatedPost.updatedAt.toISOString()
+        };
     }
 };
