@@ -113,7 +113,7 @@ export default {
 
         return {
             totalPosts: totalPosts,
-            posts: posts.map(post => post.toJSON())
+            posts: posts.map(post => ({ ...post.toJSON(), createdAt: post.createdAt.toISOString() }))
         };
     },
 
@@ -123,10 +123,10 @@ export default {
         }
 
         const post = await Post.findById(id).populate('creator');
-        if(!post) {
+        if (!post) {
             throw new HttpError(404, 'Post was not found');
         }
 
-        return post.toJSON();
+        return { ...post.toJSON(), createdAt: post.createdAt.toISOString() };
     }
 };
