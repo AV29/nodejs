@@ -22,6 +22,7 @@ app.put('/postImage', async (req, res, next) => {
     if(!req.isAuth) {
         throw new HttpError(401, 'Not authenticated!');
     }
+    console.log('Here');
     if (!req.file) {
         return res.status(200).json({ message: 'No file provided!' });
     }
