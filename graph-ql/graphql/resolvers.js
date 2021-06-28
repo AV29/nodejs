@@ -140,17 +140,17 @@ export default {
             throw new HttpError(404, 'Post was not found');
         }
 
-        if (!post.creator._id.toString() === req.userId.toString()) {
+        if (post.creator._id.toString() !== req.userId.toString()) {
             throw new HttpError(403, 'Not authorized!');
         }
 
         const errors = [];
 
-        if (validator.isEmpty(title) || !validator.isLength(title, { min: 5 })) {
+        if (validator.isEmpty(postInput.title) || !validator.isLength(postInput.title, { min: 5 })) {
             errors.push({ message: 'Title is invalid' });
         }
 
-        if (validator.isEmpty(content) || !validator.isLength(content, { min: 5 })) {
+        if (validator.isEmpty(postInput.content) || !validator.isLength(postInput.content, { min: 5 })) {
             errors.push({ message: 'Content is invalid' });
         }
         if (errors.length > 0) {
@@ -159,7 +159,7 @@ export default {
 
         post.title = postInput.title;
         post.content = postInput.content;
-        if (postImage.imageUrl !== 'undefined') {
+        if (postInput.imageUrl !== 'undefined') {
             post.imageUrl = postInput.imageUrl;
         }
 
