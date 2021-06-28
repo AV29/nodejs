@@ -18,11 +18,10 @@ app.use(imageUpload);
 app.use('/images', express.static(path.join(rootPath, 'images')));
 app.use(cors);
 app.use(checkAuth);
-app.put('/postImage', async (req, res, next) => {
+app.put('/post-image', async (req, res, next) => {
     if(!req.isAuth) {
         throw new HttpError(401, 'Not authenticated!');
     }
-    console.log('Here');
     if (!req.file) {
         return res.status(200).json({ message: 'No file provided!' });
     }
@@ -30,8 +29,7 @@ app.put('/postImage', async (req, res, next) => {
     if (req.body.oldPath) {
         await deleteFile(req.body.oldPath);
     }
-
-    return res.status(201).json({ message: 'File stored', filePath: req.filePath });
+    return res.status(201).json({ message: 'File stored', filePath: req.file.path });
 });
 app.use('/graphql', graphql);
 app.use(handleAllErrors);
