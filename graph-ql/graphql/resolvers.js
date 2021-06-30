@@ -1,9 +1,10 @@
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import Post from '../models/post.js';
 import { HttpError } from '../utils/errors.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { deleteFile } from '../utils/file.js';
 
 export default {
     createUser: async function (args, req) {
@@ -169,5 +170,30 @@ export default {
             createdAt: updatedPost.createdAt.toISOString(),
             updatedAt: updatedPost.updatedAt.toISOString()
         };
+    },
+
+    deletePost: async function ({ id }, req) {
+        if (!req.isAuth) {
+            throw new HttpError(401, 'User is not authenticated');
+        }
+
+        const post = await Post.findById(id);
+        if (!post) {
+            throw new HttpError(404, 'Post was not found');
+        }
+
+        if (post.creator.toString() !== req.userId.toString()) {
+            throw new HttpError(403, 'Not authorized!');
+        }
+
+        await deleteFile(post.imageUrl);
+        await Post.findByIdAndRemove(id);
+        const user = await User.findById(req.userId);
+        if (!user) {
+            throw new HttpError(404, 'User was not found');
+        }
+        user.posts.pull(id);
+        await user.save();
+        return true;
     }
 };
