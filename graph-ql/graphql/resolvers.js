@@ -195,5 +195,17 @@ export default {
         user.posts.pull(id);
         await user.save();
         return true;
+    },
+
+    user: async function (args, req) {
+        if (!req.isAuth) {
+            throw new HttpError(401, 'User is not authenticated');
+        }
+        const user = await User.findById(req.userId);
+        if (!user) {
+            throw new HttpError(404, 'User was not found');
+        }
+
+        return user.toJSON();
     }
 };
