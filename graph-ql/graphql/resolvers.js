@@ -207,5 +207,18 @@ export default {
         }
 
         return user.toJSON();
+    },
+
+    updateStatus: async function ({ status }, req) {
+        if (!req.isAuth) {
+            throw new HttpError(401, 'User is not authenticated');
+        }
+        const user = await User.findById(req.userId);
+        if (!user) {
+            throw new HttpError(404, 'User was not found');
+        }
+        user.status = status;
+        const savedUser = await user.save();
+        return savedUser.toJSON();
     }
 };
