@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import helmet from 'helmet';
 import csrf from 'csurf';
 import flash from 'connect-flash';
 import path from 'node:path';
@@ -19,8 +20,8 @@ import { handleAllErrors } from './controllers/error.js';
 const app = express();
 const protectCSRF = csrf({ cookie: false });
 const rootPath = path.dirname(fileURLToPath(import.meta.url));
-
 app.set('view engine', 'ejs');
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(imageUpload);
 app.use(getSession);
