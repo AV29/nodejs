@@ -8,6 +8,7 @@ import csrf from 'csurf';
 import flash from 'connect-flash';
 import path from 'node:path';
 import fs from 'node:fs';
+import https from 'node:https';
 import { fileURLToPath } from 'node:url';
 import shopRoutes from './routes/shop.js';
 import adminRoutes from './routes/admin.js';
@@ -24,6 +25,8 @@ const app = express();
 const protectCSRF = csrf({ cookie: false });
 const rootPath = path.dirname(fileURLToPath(import.meta.url));
 const accessLogStream = fs.createWriteStream(path.join(rootPath, 'access.log'), { flags: 'a' });
+const privateKey = fs.readFileSync('server.key');
+const certificate = fs.readFileSync('server.cert');
 app.set('view engine', 'ejs');
 app.use(helmet());
 app.use(compression());
@@ -48,7 +51,10 @@ try {
         useUnifiedTopology: true,
         useCreateIndex: true
     });
-    app.listen(3000);
+    https.createServer({ key: privateKey, cert: certificate }, app).listen(process.env.PORT || 3000);
+    //app.listen(3000);
 } catch (err) {
     console.log(err);
 }
+
+// openssl req -nodes -new -x509 -keyout server.key -out server.cert

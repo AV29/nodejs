@@ -1,3 +1,5 @@
+server.key
+server.cert
 .idea/
 ws-chat/debug.log
 node_modules/
