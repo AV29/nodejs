@@ -1,8 +1,12 @@
 import { expect } from 'chai';
+import checkAuth from '../middlewares/checkAuth.js';
 
-it('should add two numbers correctly', () => {
-    const num1 = 3;
-    const num2 = 4;
+it('should throw an error if no authorization header is present', () => {
+    const req = {
+        get: function() {
+            return null;
+        }
+    };
 
-    expect(num1 + num2).to.equal(7);
+    expect(checkAuth.bind(this, req, {}, () => {})).to.throw('Test Error')
 });
